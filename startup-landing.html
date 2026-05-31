@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CafeBoost — The Operating System for Modern Cafes</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0B1120;
+  --bg-card: #111827;
+  --bg-elevated: #1F2937;
+  --text: #F9FAFB;
+  --text-muted: #9CA3AF;
+  --text-dim: #6B7280;
+  --accent: #7C3AED;
+  --accent-light: #A78BFA;
+  --amber: #F59E0B;
+  --amber-light: #FCD34D;
+  --success: #10B981;
+  --border: rgba(255,255,255,0.06);
+  --glass: rgba(255,255,255,0.03);
+  --radius: 16px;
+  --radius-sm: 8px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+h1, h2, h3, h4 { font-family: 'Plus Jakarta Sans', sans-serif; }
+a { color: inherit; text-decoration: none; }
+
+/* Aurora background */
+.aurora { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+.aurora .blob { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.15; animation: float 20s ease-in-out infinite; }
+.aurora .b1 { width: 600px; height: 600px; background: #7C3AED; top: -200px; right: -100px; animation-delay: 0s; }
+.aurora .b2 { width: 500px; height: 500px; background: #3B82F6; bottom: -150px; left: -100px; animation-delay: -7s; }
+.aurora .b3 { width: 400px; height: 400px; background: #F59E0B; top: 50%; left: 50%; animation-delay: -14s; }
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(50px, -30px) scale(1.05); }
+  66% { transform: translate(-30px, 50px) scale(0.95); }
+}
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+/* NAV */
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; backdrop-filter: blur(20px); background: rgba(11,17,32,0.8); border-bottom: 1px solid var(--border); }
+nav .inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+nav .logo { font-family: 'Plus Jakarta Sans'; font-weight: 800; font-size: 1.25rem; display: flex; align-items: center; gap: 8px; }
+nav .logo span { background: linear-gradient(135deg, var(--accent), var(--amber)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+nav .links { display: flex; gap: 32px; font-size: 0.875rem; font-weight: 500; color: var(--text-muted); }
+nav .links a:hover { color: var(--text); transition: 0.2s; }
+nav .cta { padding: 8px 20px; border-radius: 8px; font-size: 0.875rem; font-weight: 600; background: var(--accent); color: white; border: none; cursor: pointer; transition: all 0.3s; }
+nav .cta:hover { box-shadow: 0 0 20px rgba(124,58,237,0.4); transform: translateY(-1px); }
+.nav-mobile { display: none; }
+
+/* HERO */
+.hero { min-height: 100vh; display: flex; align-items: center; padding: 120px 0 80px; }
+.hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+.hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; border-radius: 100px; background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.2); font-size: 0.75rem; font-weight: 600; color: var(--accent-light); margin-bottom: 24px; }
+.hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+h1.hero-title { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; line-height: 1.08; letter-spacing: -0.03em; margin-bottom: 24px; }
+h1.hero-title .gradient { background: linear-gradient(135deg, var(--accent-light), var(--amber)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero-sub { font-size: 1.125rem; color: var(--text-muted); line-height: 1.7; max-width: 480px; margin-bottom: 32px; }
+.hero-actions { display: flex; gap: 16px; margin-bottom: 40px; flex-wrap: wrap; }
+.btn-primary { padding: 14px 28px; border-radius: 12px; font-size: 0.9375rem; font-weight: 600; background: linear-gradient(135deg, var(--accent), #9333EA); color: white; border: none; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; }
+.btn-primary:hover { box-shadow: 0 0 30px rgba(124,58,237,0.4); transform: translateY(-2px); }
+.btn-secondary { padding: 14px 28px; border-radius: 12px; font-size: 0.9375rem; font-weight: 600; background: transparent; color: var(--text); border: 1px solid rgba(255,255,255,0.15); cursor: pointer; transition: all 0.3s; }
+.btn-secondary:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.03); }
+.trust { display: flex; gap: 32px; flex-wrap: wrap; }
+.trust-item { display: flex; align-items: center; gap: 8px; font-size: 0.8125rem; color: var(--text-muted); }
+.trust-item strong { color: var(--text); }
+
+/* Dashboard mockup */
+.dashboard-mock { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+.dash-header { height: 40px; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 16px; gap: 8px; background: rgba(255,255,255,0.02); }
+.dash-dot { width: 10px; height: 10px; border-radius: 50%; }
+.dash-dot.r { background: #FF5F56; } .dash-dot.y { background: #FFBD2E; } .dash-dot.g { background: #27C93F; }
+.dash-title { margin-left: 12px; font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); }
+.dash-body { padding: 20px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.dash-card { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+.dash-card .label { font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 8px; }
+.dash-card .value { font-family: 'Plus Jakarta Sans'; font-size: 1.5rem; font-weight: 800; }
+.dash-card .change { display: inline-flex; align-items: center; gap: 2px; font-size: 0.625rem; font-weight: 700; color: var(--success); background: rgba(16,185,129,0.1); padding: 2px 6px; border-radius: 4px; margin-left: 8px; }
+.dash-card.full { grid-column: span 2; }
+.sparkline { margin-top: 12px; height: 32px; }
+.sparkline svg { width: 100%; height: 100%; }
+.progress-bar { height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; margin-top: 12px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--accent), var(--amber)); animation: progressGrow 1.5s ease-out; }
+@keyframes progressGrow { from { width: 0; } }
+
+/* LOGOS */
+.logos-section { padding: 80px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.logos-title { text-align: center; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-dim); margin-bottom: 32px; }
+.logos-track { display: flex; gap: 48px; animation: scroll 30s linear infinite; align-items: center; }
+.logos-track span { font-family: 'Plus Jakarta Sans'; font-size: 1.125rem; font-weight: 700; color: var(--text-dim); white-space: nowrap; opacity: 0.5; }
+@keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.logos-wrapper { overflow: hidden; }
+
+/* FEATURES */
+.features-section { padding: 120px 0; }
+.section-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent-light); margin-bottom: 16px; }
+.section-title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 16px; max-width: 600px; }
+.section-desc { font-size: 1rem; color: var(--text-muted); line-height: 1.7; max-width: 480px; margin-bottom: 48px; }
+.feature-row { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; margin-bottom: 120px; }
+.feature-row.reverse { direction: rtl; }
+.feature-row.reverse > * { direction: ltr; }
+.feature-visual { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 32px; min-height: 360px; position: relative; overflow: hidden; }
+.feature-visual::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 200px; background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(245,158,11,0.05)); pointer-events: none; }
+
+/* BENTO */
+.bento-section { padding: 120px 0; }
+.bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.bento-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 32px; transition: all 0.4s cubic-bezier(0.4,0,0.2,1); position: relative; overflow: hidden; }
+.bento-card:hover { border-color: rgba(124,58,237,0.3); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+.bento-card.span2 { grid-column: span 2; }
+.bento-icon { width: 48px; height: 48px; border-radius: 12px; background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.15); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; margin-bottom: 20px; }
+.bento-card h3 { font-size: 1.125rem; font-weight: 700; margin-bottom: 8px; }
+.bento-card p { font-size: 0.8125rem; color: var(--text-muted); line-height: 1.6; }
+.bento-mini { margin-top: 24px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+
+/* PRICING */
+.pricing-section { padding: 120px 0; }
+.pricing-toggle { display: flex; justify-content: center; margin-bottom: 48px; }
+.toggle-wrap { display: flex; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 4px; gap: 4px; }
+.toggle-btn { padding: 8px 20px; border-radius: 8px; font-size: 0.8125rem; font-weight: 600; background: none; color: var(--text-muted); border: none; cursor: pointer; transition: 0.2s; }
+.toggle-btn.active { background: var(--bg-elevated); color: var(--text); }
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.price-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 40px; transition: 0.4s; position: relative; }
+.price-card.featured { border-color: var(--accent); box-shadow: 0 0 40px rgba(124,58,237,0.15); transform: scale(1.03); }
+.price-card .badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); padding: 4px 16px; border-radius: 100px; background: linear-gradient(135deg, var(--accent), var(--amber)); font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
+.price-card .name { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); }
+.price-card .amount { font-family: 'Plus Jakarta Sans'; font-size: 3rem; font-weight: 800; margin: 8px 0; }
+.price-card .amount span { font-size: 0.875rem; font-weight: 500; color: var(--text-muted); }
+.price-card .desc { font-size: 0.8125rem; color: var(--text-muted); margin-bottom: 24px; }
+.price-card ul { list-style: none; margin-bottom: 32px; }
+.price-card li { font-size: 0.8125rem; color: var(--text-muted); padding: 6px 0; display: flex; align-items: center; gap: 10px; }
+.price-card li::before { content: '✓'; color: var(--success); font-weight: 700; }
+.price-card .btn { width: 100%; padding: 12px; border-radius: 10px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: 0.3s; text-align: center; }
+.price-card .btn-primary { background: linear-gradient(135deg, var(--accent), #9333EA); color: white; border: none; }
+.price-card .btn-outline { background: none; color: var(--text); border: 1px solid rgba(255,255,255,0.15); }
+
+/* TESTIMONIALS */
+.testimonials-section { padding: 120px 0; }
+.test-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.test-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 32px; }
+.test-stars { color: var(--amber); font-size: 0.875rem; margin-bottom: 16px; }
+.test-quote { font-size: 0.9375rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 24px; font-style: italic; }
+.test-author { font-size: 0.8125rem; font-weight: 700; }
+.test-role { font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; }
+
+/* CTA */
+.cta-section { padding: 120px 0; text-align: center; position: relative; }
+.cta-section::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 600px; height: 600px; background: radial-gradient(circle, rgba(124,58,237,0.15), transparent 70%); pointer-events: none; }
+.cta-title { font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 800; margin-bottom: 16px; }
+.cta-desc { font-size: 1rem; color: var(--text-muted); max-width: 480px; margin: 0 auto 40px; line-height: 1.7; }
+.cta-form { display: flex; gap: 12px; max-width: 440px; margin: 0 auto; }
+.cta-input { flex: 1; padding: 14px 20px; border-radius: 12px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text); font-size: 0.9375rem; outline: none; transition: 0.3s; }
+.cta-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(124,58,237,0.2); }
+
+/* FOOTER */
+footer { border-top: 1px solid var(--border); padding: 80px 0 40px; }
+.footer-grid { display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 48px; margin-bottom: 48px; }
+.footer-brand p { font-size: 0.8125rem; color: var(--text-muted); line-height: 1.6; margin-top: 16px; max-width: 300px; }
+.footer-col h4 { font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 16px; }
+.footer-col a { display: block; font-size: 0.8125rem; color: var(--text-muted); padding: 4px 0; transition: 0.2s; }
+.footer-col a:hover { color: var(--text); }
+.footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-dim); }
+
+/* REVEAL */
+.reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.4,0,0.2,1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* MOBILE */
+@media (max-width: 900px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+  .feature-row, .feature-row.reverse { grid-template-columns: 1fr; direction: ltr; }
+  .bento-grid { grid-template-columns: 1fr; }
+  .bento-card.span2 { grid-column: span 1; }
+  .pricing-grid { grid-template-columns: 1fr; }
+  .price-card.featured { transform: none; }
+  .test-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  nav .links { display: none; }
+  .nav-mobile { display: block; }
+}
+@media (max-width: 600px) {
+  .hero-actions { flex-direction: column; }
+  .trust { flex-direction: column; gap: 12px; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; gap: 8px; }
+  .cta-form { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+<div class="aurora"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<nav>
+<div class="inner">
+  <div class="logo">☕ <span>CafeBoost</span></div>
+  <div class="links"><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#testimonials">Customers</a></div>
+  <button class="cta">Start Free Trial →</button>
+</div>
+</nav>
+
+<section class="hero">
+<div class="container">
+<div class="hero-grid">
+  <div class="reveal">
+    <div class="hero-badge"><span class="dot"></span> Built for Independent Cafes</div>
+    <h1 class="hero-title">The <span class="gradient">Operating System</span> for Modern Cafes</h1>
+    <p class="hero-sub">QR ordering, loyalty rewards, table bookings, customer CRM, and live analytics — all in one gorgeous platform. Built to turn first-time visitors into lifelong regulars.</p>
+    <div class="hero-actions">
+      <button class="btn-primary">Start Free Trial →</button>
+      <button class="btn-secondary">Watch Demo</button>
+    </div>
+    <div class="trust">
+      <div class="trust-item">⭐ <strong>4.9</strong> rating</div>
+      <div class="trust-item"><strong>500+</strong> cafes</div>
+      <div class="trust-item"><strong>50K+</strong> orders processed</div>
+    </div>
+  </div>
+  <div class="dashboard-mock reveal" style="transition-delay:0.2s">
+    <div class="dash-header"><span class="dash-dot r"></span><span class="dash-dot y"></span><span class="dash-dot g"></span><span class="dash-title">The Daily Drip · Live Control Center</span></div>
+    <div class="dash-body">
+      <div class="dash-card"><div class="label">Daily Sales</div><div class="value">₹14,280</div><div class="change">↑ 12%</div><div class="sparkline"><svg viewBox="0 0 200 40"><path d="M0 30 Q50 35 100 15 T200 10" fill="none" stroke="#7C3AED" stroke-width="2"/><path d="M0 30 Q50 35 100 15 T200 10 L200 40 L0 40 Z" fill="url(#sg)" opacity="0.15"/><defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#7C3AED"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs></svg></div></div>
+      <div class="dash-card"><div class="label">Active Tables</div><div class="value">12 <span style="font-size:0.875rem;font-weight:500;color:#6B7280">/ 15</span></div><div class="progress-bar"><div class="progress-fill" style="width:80%"></div></div></div>
+      <div class="dash-card"><div class="label">Active Orders</div><div class="value">8</div><div style="display:flex;gap:6px;margin-top:8px"><span style="padding:2px 8px;border-radius:4px;background:rgba(124,58,237,0.1);color:#A78BFA;font-size:0.625rem;font-weight:700">T3</span><span style="padding:2px 8px;border-radius:4px;background:rgba(16,185,129,0.1);color:#10B981;font-size:0.625rem;font-weight:700">T7</span><span style="padding:2px 8px;border-radius:4px;background:rgba(245,158,11,0.1);color:#F59E0B;font-size:0.625rem;font-weight:700">T1</span></div></div>
+      <div class="dash-card"><div class="label">Repeat Rate</div><div class="value">62%</div><div class="change">↑ 4.8%</div></div>
+    </div>
+  </div>
+</div>
+</div>
+</section>
+
+<section class="logos-section">
+<div class="logos-wrapper">
+<div class="logos-track">
+  <span>The Daily Drip</span><span>·</span><span>Bean & Beyond</span><span>·</span><span>Brew & Co</span><span>·</span><span>Roast Republic</span><span>·</span><span>Grind House</span><span>·</span><span>Chai & Chill</span><span>·</span><span>Filter Coffee Co</span><span>·</span><span>The Espresso Lab</span><span>·</span>
+  <span>The Daily Drip</span><span>·</span><span>Bean & Beyond</span><span>·</span><span>Brew & Co</span><span>·</span><span>Roast Republic</span><span>·</span><span>Grind House</span><span>·</span><span>Chai & Chill</span><span>·</span><span>Filter Coffee Co</span><span>·</span><span>The Espresso Lab</span><span>·</span>
+</div>
+</div>
+</section>
+
+<section class="features-section" id="features">
+<div class="container">
+<div class="reveal"><p class="section-label">Features</p><h2 class="section-title">Everything your cafe needs to thrive</h2><p class="section-desc">From the moment a guest scans a QR code to the loyalty points they earn — CafeBoost orchestrates every touchpoint.</p></div>
+
+<div class="feature-row reveal">
+  <div>
+    <p class="section-label">QR Ordering</p>
+    <h3 class="section-title" style="font-size:1.75rem">Scan. Order. Delight.</h3>
+    <p class="section-desc">Customers scan a table QR, browse your menu, and order instantly — no app download, no waiting. Average order time drops from 8 minutes to 90 seconds.</p>
+  </div>
+  <div class="feature-visual" style="display:flex;align-items:center;justify-content:center">
+    <div style="text-align:center"><div style="width:120px;height:120px;border-radius:20px;background:var(--bg-elevated);border:2px solid rgba(124,58,237,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:3rem">📱</div><p style="font-size:0.75rem;color:var(--text-dim);font-weight:600;letter-spacing:0.05em">TABLE 04 · SCAN TO ORDER</p></div>
+  </div>
+</div>
+
+<div class="feature-row reverse reveal">
+  <div>
+    <p class="section-label">Loyalty Rewards</p>
+    <h3 class="section-title" style="font-size:1.75rem">Turn visitors into regulars</h3>
+    <p class="section-desc">Automatic stamp collection, points, and tiered rewards. Guests earn on every order. The result? 62% repeat rate and climbing.</p>
+  </div>
+  <div class="feature-visual" style="display:flex;align-items:center;justify-content:center">
+    <div style="display:flex;gap:12px">
+      <div style="width:48px;height:48px;border-radius:50%;background:rgba(245,158,11,0.15);border:2px solid var(--amber);display:flex;align-items:center;justify-content:center;font-size:1.25rem">☕</div>
+      <div style="width:48px;height:48px;border-radius:50%;background:rgba(245,158,11,0.15);border:2px solid var(--amber);display:flex;align-items:center;justify-content:center;font-size:1.25rem">☕</div>
+      <div style="width:48px;height:48px;border-radius:50%;background:rgba(245,158,11,0.15);border:2px solid var(--amber);display:flex;align-items:center;justify-content:center;font-size:1.25rem">☕</div>
+      <div style="width:48px;height:48px;border-radius:50%;background:rgba(245,158,11,0.15);border:2px solid var(--amber);display:flex;align-items:center;justify-content:center;font-size:1.25rem">☕</div>
+      <div style="width:48px;height:48px;border-radius:50%;background:rgba(245,158,11,0.15);border:2px solid var(--amber);display:flex;align-items:center;justify-content:center;font-size:1.25rem">☕</div>
+      <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.03);border:2px dashed rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:0.75rem;color:var(--text-dim)">?</div>
+    </div>
+  </div>
+</div>
+
+<div class="feature-row reveal">
+  <div>
+    <p class="section-label">Smart Bookings</p>
+    <h3 class="section-title" style="font-size:1.75rem">No more double-bookings</h3>
+    <p class="section-desc">Automated reservations with SMS reminders, occupancy planning, and a beautiful booking widget that lives on your website.</p>
+  </div>
+  <div class="feature-visual" style="display:flex;align-items:center;justify-content:center">
+    <div style="width:100%;max-width:280px">
+      <div style="display:flex;justify-content:space-between;font-size:0.75rem;font-weight:600;margin-bottom:12px"><span>Table 12 · 4 Guests</span><span style="color:var(--accent-light)">7:30 PM</span></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span style="padding:8px 16px;border-radius:8px;background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.2);font-size:0.75rem;font-weight:600">6:00</span>
+        <span style="padding:8px 16px;border-radius:8px;background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.2);font-size:0.75rem;font-weight:600">6:30</span>
+        <span style="padding:8px 16px;border-radius:8px;background:var(--accent);border:1px solid var(--accent);font-size:0.75rem;font-weight:600;color:white">7:00</span>
+        <span style="padding:8px 16px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid var(--border);font-size:0.75rem;font-weight:600;color:var(--text-dim)">7:30</span>
+        <span style="padding:8px 16px;border-radius:8px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);font-size:0.75rem;font-weight:600;color:var(--success)">8:00</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</section>
+
+<section class="bento-section">
+<div class="container">
+<div class="reveal" style="text-align:center;margin-bottom:64px"><p class="section-label">Platform</p><h2 class="section-title" style="margin:0 auto 16px">One dashboard to run it all</h2><p class="section-desc" style="margin:0 auto">Every tool you need, beautifully connected.</p></div>
+<div class="bento-grid">
+  <div class="bento-card span2 reveal"><div class="bento-icon">📊</div><h3>Live Operations Insights</h3><p>Real-time analytics for sales, peak hours, prep speed, and item popularity. Zero setup required.</p><div class="bento-mini"><div style="display:flex;justify-content:space-between;font-size:0.6875rem;margin-bottom:8px"><span style="color:var(--text-dim)">Peak Hour</span><span style="color:var(--accent-light);font-weight:600">11 AM – 1 PM</span></div><div class="progress-bar"><div class="progress-fill" style="width:85%"></div></div></div></div>
+  <div class="bento-card reveal"><div class="bento-icon">📱</div><h3>QR Table Ordering</h3><p>Contactless ordering at every table. Scan to order, skip queues, speed up turnover by 18%.</p></div>
+  <div class="bento-card reveal"><div class="bento-icon">📅</div><h3>Smart Bookings</h3><p>Automated reservations with SMS reminders and occupancy planning.</p></div>
+  <div class="bento-card span2 reveal"><div class="bento-icon">👥</div><h3>Customer CRM & Analytics</h3><p>Automated guest histories, favorite items, visit frequency, and average spend. Tailor rewards dynamically.</p><div class="bento-mini" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"><div style="text-align:center"><p style="font-size:0.625rem;color:var(--text-dim);font-weight:700;text-transform:uppercase">Top Regular</p><p style="font-size:0.8125rem;font-weight:700;margin-top:4px">Anjali S.</p></div><div style="text-align:center"><p style="font-size:0.625rem;color:var(--text-dim);font-weight:700;text-transform:uppercase">Favorite</p><p style="font-size:0.8125rem;font-weight:700;margin-top:4px">Iced Latte</p></div><div style="text-align:center"><p style="font-size:0.625rem;color:var(--text-dim);font-weight:700;text-transform:uppercase">Spends</p><p style="font-size:0.8125rem;font-weight:700;margin-top:4px">₹4,820</p></div></div></div>
+  <div class="bento-card reveal"><div class="bento-icon">🎯</div><h3>Auto Marketing</h3><p>Re-engage slipping customers via SMS/email when visits drop. Coming soon.</p></div>
+</div>
+</div>
+</section>
+
+<section class="pricing-section" id="pricing">
+<div class="container">
+<div class="reveal" style="text-align:center;margin-bottom:16px"><p class="section-label">Pricing</p><h2 class="section-title" style="margin:0 auto 16px">Simple plans that scale</h2><p class="section-desc" style="margin:0 auto">Every plan includes a 14-day free trial. No lock-ins.</p></div>
+<div class="pricing-toggle"><div class="toggle-wrap"><button class="toggle-btn active" onclick="togglePrice(this,\'monthly\')">Monthly</button><button class="toggle-btn" onclick="togglePrice(this,\'yearly\')">Yearly <span style="font-size:0.625rem;color:var(--success);font-weight:700;background:rgba(16,185,129,0.1);padding:2px 6px;border-radius:4px">-20%</span></button></div></div>
+<div class="pricing-grid">
+  <div class="price-card reveal"><p class="name">Starter</p><p class="amount" data-monthly="₹999" data-yearly="₹799">₹999<span>/mo</span></p><p class="desc">For new cafes finding their initial regulars.</p><ul><li>Up to 500 customers</li><li>Loyalty rewards program</li><li>Basic table bookings</li><li>Email support (24h)</li></ul><button class="btn btn-outline">Start Free Trial</button></div>
+  <div class="price-card featured reveal"><div class="badge">Most Popular</div><p class="name">Growth</p><p class="amount" data-monthly="₹2,499" data-yearly="₹1,999">₹2,499<span>/mo</span></p><p class="desc">Most popular for busy neighborhood spots.</p><ul><li>Unlimited customers</li><li>Full QR ordering</li><li>Staff management</li><li>Live analytics dashboard</li><li>Priority 24/7 support</li></ul><button class="btn btn-primary">Start Free Trial</button></div>
+  <div class="price-card reveal"><p class="name">Roastery</p><p class="amount" data-monthly="₹4,999" data-yearly="₹3,999">₹4,999<span>/mo</span></p><p class="desc">For multi-location cafes & roasters.</p><ul><li>Up to 5 locations</li><li>White-label branding</li><li>API access</li><li>Dedicated account manager</li></ul><button class="btn btn-outline">Book Demo</button></div>
+</div>
+</div>
+</section>
+
+<section class="testimonials-section" id="testimonials">
+<div class="container">
+<div class="reveal" style="text-align:center;margin-bottom:64px"><p class="section-label">Customers</p><h2 class="section-title" style="margin:0 auto">Loved by independent owners</h2></div>
+<div class="test-grid">
+  <div class="test-card reveal"><div class="test-stars">★★★★★</div><p class="test-quote">"We're piloting CafeBoost and the QR ordering flow is exactly what we needed for busy weekend mornings."</p><p class="test-author">Early Access Cafe</p><p class="test-role">Chennai, Tamil Nadu</p></div>
+  <div class="test-card reveal" style="transition-delay:0.1s"><div class="test-stars">★★★★★</div><p class="test-quote">"Setup took less than 20 minutes. Menu was live, QR was printed, and the first order came in the same day."</p><p class="test-author">Founding Cafe Partner</p><p class="test-role">Bangalore, Karnataka</p></div>
+  <div class="test-card reveal" style="transition-delay:0.2s"><div class="test-stars">★★★★★</div><p class="test-quote">"The loyalty system is simple enough that our regulars actually use it — that's rare."</p><p class="test-author">Independent Cafe Owner</p><p class="test-role">Hyderabad, Telangana</p></div>
+</div>
+</div>
+</section>
+
+<section class="cta-section">
+<div class="container reveal">
+<h2 class="cta-title">Ready to grow your cafe?</h2>
+<p class="cta-desc">Join the modern wave of digital cafes scaling their customer retention. Setup takes under 20 minutes.</p>
+<div class="cta-form"><input type="email" class="cta-input" placeholder="Enter your email"><button class="btn-primary">Start Free Trial →</button></div>
+</div>
+</section>
+
+<footer>
+<div class="container">
+<div class="footer-grid">
+  <div class="footer-brand"><div class="logo">☕ <span style="background:linear-gradient(135deg,var(--accent),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent">CafeBoost</span></div><p>The all-in-one growth platform for specialty cafes, roasters, and neighborhood dining.</p></div>
+  <div class="footer-col"><h4>Product</h4><a href="#">Features</a><a href="#">Pricing</a><a href="#">Discover</a><a href="#">Sign in</a></div>
+  <div class="footer-col"><h4>Company</h4><a href="#">About</a><a href="#">Customers</a><a href="#">Careers</a><a href="#">Contact</a></div>
+  <div class="footer-col"><h4>Legal</h4><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Security</a></div>
+</div>
+<div class="footer-bottom"><span>© 2026 CafeBoost. Brewed with care.</span><span>hello@cafeboost.app</span></div>
+</div>
+</footer>
+
+<script>
+// Reveal on scroll
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// Pricing toggle
+function togglePrice(btn, period) {
+  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.amount').forEach(el => {
+    const val = el.getAttribute('data-' + period);
+    if (val) el.innerHTML = val + '<span>/mo</span>';
+  });
+}
+</script>
+</body>
+</html>
