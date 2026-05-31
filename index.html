@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CafeBoost — 10 UI Themes</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#0A0A0A;color:#fff;min-height:100vh}
+.hero{text-align:center;padding:60px 24px 40px;background:linear-gradient(135deg,#0A0A0A,#1a1a2e,#0A0A0A)}
+.hero h1{font-family:'Playfair Display',serif;font-size:42px;background:linear-gradient(135deg,#D4A843,#F59E0B);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:#888;font-size:15px;margin-top:8px}
+.grid{max-width:1100px;margin:0 auto;padding:30px 24px 60px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.card{background:#141414;border:1px solid #222;border-radius:14px;overflow:hidden;transition:all .3s;cursor:pointer;text-decoration:none;color:#fff;display:block}
+.card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.4);border-color:#444}
+.card-color{height:6px}
+.card-body{padding:18px 20px}
+.card-num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:7px;font-weight:800;font-size:12px;margin-bottom:8px}
+.card-title{font-size:16px;font-weight:700;margin-bottom:4px}
+.card-desc{font-size:13px;color:#888;line-height:1.5}
+.card-theme{display:flex;gap:4px;margin-top:10px}
+.card-theme span{width:16px;height:16px;border-radius:4px;border:1px solid #333}
+.footer{text-align:center;padding:30px;color:#555;font-size:12px;border-top:1px solid #1a1a1a}
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>CafeBoost</h1>
+  <p>10 Screens × 10 Different Themes — World-Class UI Design</p>
+</div>
+<div class="grid">
+
+  <a class="card" href="01-landing.html">
+    <div class="card-color" style="background:linear-gradient(90deg,#0A1628,#D4A843)"></div>
+    <div class="card-body">
+      <div class="card-num" style="background:#D4A843;color:#0A1628">1</div>
+      <div class="card-title">🏠 Landing Page</div>
+      <div class="card-desc">Hero, features, testimonials, CTA</div>
+      <div class="card-theme"><span style="background:#0A1628"></span><span style="background:#1B2A4A"></span><span style="background:#D4A843"></span><span style="background:#E0BC5E"></span></div>
+    </div>
+  </a>
+
+  <a class="card" href="02-qr-menu.html">
+    <div class="card-color" style="background:linear-gradient(90deg,#3E2723,#D4A843)"></div>
+    <div class="card-body">
+      <div class="card-num" style="background:#8D6E63;color:#fff">2</div>
+      <div class="card-title">📱 QR Order Menu</div>
+      <div class="card-desc">Cozy cafe — Brown + Cream + Gold</div>
+      <div class="card-theme"><span style="background:#3E2723"></span><span style="background:#5D4037"></span><span style="background:#8D6E63"></span><span style="background:#EFEBE9"></span></div>
+    </div>
+  </a>
+
+  <a class="card" href="03-table-booking.html">
+    <div class="card-color" style="background:linear-gradient(90deg,#1B4332,#95D5B2)"></div>
+    <div class="card-body">
+      <div class="card-num" style="background:#40916C;color:#fff">3</div>
+      <div class="card-title">🪑 Table Booking</div>
+      <div class="card-desc">Fresh natural — Forest Green + Mint</div>
+      <div class="card-theme"><span style="background:#1B4332"></span><span style="background:#2D6A4F"></span><span style="background:#40916C"></span><span style="background:#95D5B2"></span></div>
+    </div>
+  </a>
+
+  <a class="card" href="04-loyalty.html">
+    <div class="card-color" style="background:linear-gradient(90deg,#2E1065,#A78BFA)"></div>
+    <div class="card-body">
+      <div class="card-num" style="background:#7C3AED;color:#fff">4</div>
+      <div class="card-title">⭐ Loyalty & Rewards</div>
+      <div class="card-desc">Premium — Purple + Lavender</div>
+      <div class="card-theme"><span style="background:#2E1065"></span><span style="background:#4C1D95"></span><span style="background:#7C3AED"></span><span style="background:#A78BFA"></span></div>
+    </div>
+  </a>
+
+  <a class="card" href="05-staff-dashboard.html">
+    <div class="card-color" style="background:linear-gradient(90deg,#0F172A,#3B82F6)"></div>
+    <div class="card-body">
+      <div class="card-num" style="background:#3B82F6;color:#fff">5</div>
+      <div class="card-title">👨‍🍳 Staff Dashboard</div>
+      <div class="card-desc">Professional — Dark Slate + Electric Blue</div>
+      <div class="card-theme"><span style="background:#0F172A"></span><span style="background:#1E293B"></span><span style="background:#3B82F6"></span><span style="background:#60A5FA"></span></div>
+    </div>
+  </a>
+
+  <a class="card" href="06-order-tracking.html">
+    <div class="card-color" style="background:linear-gradient(90deg,#7C2D12,#FDBA74)"></div>
+    <div class="card-body">
+      <div class="card-num" style="background:#F97316;color:#fff">6</div>
+      <div class="card-title">📦 Order Tracking</div>
+      <div class="card-desc">Warm appetizing — Coral + Peach</div>
+      <div class="card-theme"><span style="background:#7C2D12"></span><span style="background:#C2410C"></span><span style="background:#F97316"></span><span style="background:#FDBA74"></span></div>
+    </div>
+  </a>
+
+  <a class="card" href="07-cart-checkout.html">
+    <div class="card-color" style="background:linear-gradient(90deg,#134E4A,#5EEAD4)"></div>
+    <div class="card-body">
+      <div class="card-num" style="background:#14B8A6;color:#fff">7</div>
+      <div class="card-title">🛒 Cart & Checkout</div>
+      <div class="card-desc">Clean modern — Teal + Cyan</div>
+      <div class="card-theme"><span style="background:#134E4A"></span><span style="background:#0F766E"></span><span style="background:#14B8A6"></span><span style="background:#5EEAD4"></span></div>
+    </div>
+  </a>
+
+  <a class="card" href="08-customer-profile.html">
+    <div class="card-color" style="background:linear-gradient(90deg,#4C0519,#FDA4AF)"></div>
+    <div class="card-body">
+      <div class="card-num" style="background:#F43F5E;color:#fff">8</div>
+      <div class="card-title">👤 Customer Profile</div>
+      <div class="card-desc">Elegant personal — Rose + Blush</div>
+      <div class="card-theme"><span style="background:#4C0519"></span><span style="background:#9F1239"></span><span style="background:#F43F5E"></span><span style="background:#FDA4AF"></span></div>
+    </div>
+  </a>
+
+  <a class="card" href="09-admin-analytics.html">
+    <div class="card-color" style="background:linear-gradient(90deg,#0D0D0D,#22C55E)"></div>
+    <div class="card-body">
+      <div class="card-num" style="background:#22C55E;color:#000">9</div>
+      <div class="card-title">📊 Admin Analytics</div>
+      <div class="card-desc">Tech data — Charcoal + Neon Green</div>
+      <div class="card-theme"><span style="background:#0D0D0D"></span><span style="background:#1A1A1A"></span><span style="background:#22C55E"></span><span style="background:#4ADE80"></span></div>
+    </div>
+  </a>
+
+  <a class="card" href="10-kitchen-queue.html">
+    <div class="card-color" style="background:linear-gradient(90deg,#1C0A00,#FBBF24)"></div>
+    <div class="card-body">
+      <div class="card-num" style="background:#DC2626;color:#fff">10</div>
+      <div class="card-title">🔥 Kitchen Queue</div>
+      <div class="card-desc">Urgency heat — Dark Red + Orange</div>
+      <div class="card-theme"><span style="background:#1C0A00"></span><span style="background:#7C2D12"></span><span style="background:#DC2626"></span><span style="background:#F97316"></span></div>
+    </div>
+  </a>
+
+</div>
+<div class="footer">Designed by Woohoo for CafeBoost — 10 Themes × 10 Screens — 2026</div>
+</body>
+</html>

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CafeBoost — Staff Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg-darkest:#0F172A;--bg-dark:#1E293B;--bg-card:#334155;
+  --blue:#3B82F6;--blue-light:#60A5FA;--blue-glow:rgba(59,130,246,.15);
+  --text:#F1F5F9;--text-muted:#94A3B8;--text-dim:#64748B;
+  --green:#22C55E;--amber:#F59E0B;--rose:#F43F5E;
+}
+html{font-family:'Inter',system-ui,sans-serif;font-size:14px;background:var(--bg-darkest);color:var(--text)}
+body{display:flex;min-height:100vh;overflow-x:hidden}
+
+/* Sidebar */
+.sidebar{
+  width:240px;background:var(--bg-dark);border-right:1px solid rgba(255,255,255,.06);
+  display:flex;flex-direction:column;padding:24px 0;flex-shrink:0;
+  position:fixed;left:0;top:0;bottom:0;z-index:100;
+  animation:sidebarIn .4s ease-out;
+}
+@keyframes sidebarIn{from{transform:translateX(-100%)}to{transform:translateX(0)}}
+.sidebar-brand{padding:0 24px 32px;display:flex;align-items:center;gap:12px}
+.sidebar-brand .logo{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,var(--blue),var(--blue-light));
+  display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;
+}
+.sidebar-brand span{font-size:16px;font-weight:700;letter-spacing:-.3px}
+.sidebar-brand small{display:block;font-size:10px;color:var(--text-dim);font-weight:400;letter-spacing:1px;text-transform:uppercase}
+
+.nav-section{padding:0 12px;margin-bottom:24px}
+.nav-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);padding:0 12px 8px}
+.nav-item{
+  display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;
+  color:var(--text-muted);cursor:pointer;transition:all .2s;font-weight:500;font-size:13px;
+  margin-bottom:2px;text-decoration:none;
+}
+.nav-item:hover{background:rgba(255,255,255,.05);color:var(--text)}
+.nav-item.active{background:var(--blue-glow);color:var(--blue-light)}
+.nav-item .icon{width:20px;text-align:center;font-size:16px}
+.nav-item .badge{
+  margin-left:auto;background:var(--rose);color:#fff;font-size:10px;
+  padding:2px 7px;border-radius:10px;font-weight:700;
+}
+.sidebar-footer{margin-top:auto;padding:16px 24px;border-top:1px solid rgba(255,255,255,.06)}
+.user-info{display:flex;align-items:center;gap:10px}
+.user-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,#6366F1,#8B5CF6);
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;
+}
+.user-info div span{display:block;font-weight:600;font-size:13px}
+.user-info div small{color:var(--text-dim);font-size:11px}
+
+/* Main */
+.main{margin-left:240px;flex:1;min-width:0}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 32px;border-bottom:1px solid rgba(255,255,255,.06);
+  background:var(--bg-dark);position:sticky;top:0;z-index:50;
+  animation:fadeDown .4s ease-out;
+}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.topbar h1{font-size:20px;font-weight:700;letter-spacing:-.3px}
+.topbar-right{display:flex;align-items:center;gap:16px}
+.topbar-right .time{color:var(--text-muted);font-size:13px;font-weight:500}
+.search-box{
+  background:var(--bg-card);border:1px solid rgba(255,255,255,.08);border-radius:10px;
+  padding:8px 14px;display:flex;align-items:center;gap:8px;min-width:220px;
+}
+.search-box input{background:none;border:none;outline:none;color:var(--text);font-size:13px;width:100%;font-family:inherit}
+.search-box input::placeholder{color:var(--text-dim)}
+.notif-btn{
+  width:36px;height:36px;border-radius:10px;background:var(--bg-card);
+  border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;position:relative;font-size:16px;transition:all .2s;
+}
+.notif-btn:hover{background:rgba(59,130,246,.15);border-color:var(--blue)}
+.notif-btn .dot{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--rose);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.content{padding:28px 32px}
+
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.stat-card{
+  background:var(--bg-dark);border:1px solid rgba(255,255,255,.06);border-radius:14px;
+  padding:20px;position:relative;overflow:hidden;
+  animation:cardUp .5s ease-out both;transition:transform .25s,box-shadow .25s;
+}
+.stat-card:hover{transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.stat-card:nth-child(1){animation-delay:.1s}
+.stat-card:nth-child(2){animation-delay:.15s}
+.stat-card:nth-child(3){animation-delay:.2s}
+.stat-card:nth-child(4){animation-delay:.25s}
+@keyframes cardUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.stat-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  border-radius:14px 14px 0 0;
+}
+.stat-card:nth-child(1)::before{background:linear-gradient(90deg,var(--blue),var(--blue-light))}
+.stat-card:nth-child(2)::before{background:linear-gradient(90deg,var(--green),#4ADE80)}
+.stat-card:nth-child(3)::before{background:linear-gradient(90deg,var(--amber),#FBBF24)}
+.stat-card:nth-child(4)::before{background:linear-gradient(90deg,#8B5CF6,#A78BFA)}
+.stat-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.stat-header span{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted)}
+.stat-icon{
+  width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;
+}
+.stat-card:nth-child(1) .stat-icon{background:rgba(59,130,246,.15);color:var(--blue-light)}
+.stat-card:nth-child(2) .stat-icon{background:rgba(34,197,94,.15);color:var(--green)}
+.stat-card:nth-child(3) .stat-icon{background:rgba(245,158,11,.15);color:var(--amber)}
+.stat-card:nth-child(4) .stat-icon{background:rgba(139,92,246,.15);color:#A78BFA}
+.stat-value{font-size:28px;font-weight:800;letter-spacing:-1px;line-height:1}
+.stat-sub{font-size:12px;color:var(--text-dim);margin-top:6px}
+.stat-sub .up{color:var(--green);font-weight:600}
+.stat-sub .down{color:var(--rose);font-weight:600}
+
+/* Section Headers */
+.section-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-row h2{font-size:16px;font-weight:700}
+.section-row .view-all{
+  font-size:12px;color:var(--blue-light);cursor:pointer;font-weight:600;
+  background:none;border:none;font-family:inherit;transition:color .2s;
+}
+.section-row .view-all:hover{color:var(--blue)}
+
+/* Orders Table */
+.table-wrap{
+  background:var(--bg-dark);border:1px solid rgba(255,255,255,.06);border-radius:14px;
+  overflow:hidden;margin-bottom:28px;
+  animation:cardUp .5s ease-out .3s both;
+}
+table{width:100%;border-collapse:collapse}
+th{
+  text-align:left;padding:14px 20px;font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);
+  border-bottom:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);
+}
+td{padding:14px 20px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.04)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+.order-id{font-weight:700;color:var(--blue-light)}
+.badge{
+  display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;
+  font-size:11px;font-weight:700;
+}
+.badge.preparing{background:rgba(245,158,11,.12);color:var(--amber)}
+.badge.ready{background:rgba(34,197,94,.12);color:var(--green)}
+.badge.served{background:rgba(139,92,246,.12);color:#A78BFA}
+.badge .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.table-actions button{
+  background:none;border:1px solid rgba(255,255,255,.1);border-radius:8px;
+  padding:6px 10px;cursor:pointer;font-size:12px;color:var(--text-muted);
+  transition:all .2s;font-family:inherit;
+}
+.table-actions button:hover{background:var(--blue-glow);border-color:var(--blue);color:var(--blue-light)}
+
+/* Quick Actions */
+.actions-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+.action-card{
+  background:var(--bg-dark);border:1px solid rgba(255,255,255,.06);border-radius:14px;
+  padding:20px;cursor:pointer;transition:all .25s;
+  display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;
+  animation:cardUp .5s ease-out both;
+}
+.action-card:nth-child(1){animation-delay:.35s}
+.action-card:nth-child(2){animation-delay:.4s}
+.action-card:nth-child(3){animation-delay:.45s}
+.action-card:nth-child(4){animation-delay:.5s}
+.action-card:hover{transform:translateY(-3px);border-color:var(--blue);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.action-icon{
+  width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+  font-size:22px;
+}
+.action-card:nth-child(1) .action-icon{background:rgba(59,130,246,.12);color:var(--blue-light)}
+.action-card:nth-child(2) .action-icon{background:rgba(34,197,94,.12);color:var(--green)}
+.action-card:nth-child(3) .action-icon{background:rgba(245,158,11,.12);color:var(--amber)}
+.action-card:nth-child(4) .action-icon{background:rgba(244,63,94,.12);color:var(--rose)}
+.action-card h3{font-size:13px;font-weight:700}
+.action-card p{font-size:11px;color:var(--text-dim);line-height:1.4}
+
+/* Table Status Indicator */
+.table-map{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:28px}
+.table-chip{
+  padding:12px 8px;border-radius:10px;text-align:center;font-size:12px;font-weight:700;
+  cursor:pointer;transition:all .2s;border:1px solid transparent;
+}
+.table-chip.occupied{background:rgba(59,130,246,.12);color:var(--blue-light);border-color:rgba(59,130,246,.2)}
+.table-chip.available{background:rgba(34,197,94,.08);color:var(--text-dim);border-color:rgba(34,197,94,.15)}
+.table-chip:hover{transform:scale(1.05)}
+
+/* Responsive */
+@media(max-width:1100px){.stats-grid,.actions-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .content{padding:20px 16px}
+  .topbar{padding:16px}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .actions-grid{grid-template-columns:1fr 1fr}
+  .search-box{display:none}
+  table{font-size:12px}
+  th,td{padding:10px 12px}
+}
+@media(max-width:480px){
+  .stats-grid{grid-template-columns:1fr}
+  .actions-grid{grid-template-columns:1fr}
+  .table-map{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="logo">C</div>
+    <span>CafeBoost<small>Staff Panel</small></span>
+  </div>
+  <nav class="nav-section">
+    <div class="nav-label">Main</div>
+    <a class="nav-item active"><span class="icon">📊</span> Dashboard</a>
+    <a class="nav-item"><span class="icon">📋</span> Orders <span class="badge">12</span></a>
+    <a class="nav-item"><span class="icon">🪑</span> Tables</a>
+    <a class="nav-item"><span class="icon">🍽️</span> Menu</a>
+  </nav>
+  <nav class="nav-section">
+    <div class="nav-label">Management</div>
+    <a class="nav-item"><span class="icon">👥</span> Staff</a>
+    <a class="nav-item"><span class="icon">📦</span> Inventory</a>
+    <a class="nav-item"><span class="icon">📈</span> Reports</a>
+    <a class="nav-item"><span class="icon">⚙️</span> Settings</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="user-avatar">RK</div>
+      <div><span>Rahul Kumar</span><small>Manager</small></div>
+    </div>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<div class="main">
+  <header class="topbar">
+    <div>
+      <h1>Good Evening, Rahul 👋</h1>
+    </div>
+    <div class="topbar-right">
+      <div class="time">Wed, 27 May 2026 • 7:45 PM</div>
+      <div class="search-box">
+        <span>🔍</span>
+        <input type="text" placeholder="Search orders, tables...">
+      </div>
+      <button class="notif-btn">🔔<span class="dot"></span></button>
+    </div>
+  </header>
+
+  <div class="content">
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-header"><span>Total Orders</span><div class="stat-icon">📋</div></div>
+        <div class="stat-value">147</div>
+        <div class="stat-sub"><span class="up">↑ 12%</span> from yesterday</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header"><span>Revenue</span><div class="stat-icon">💰</div></div>
+        <div class="stat-value">₹28,450</div>
+        <div class="stat-sub"><span class="up">↑ 8%</span> from yesterday</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header"><span>Pending</span><div class="stat-icon">⏳</div></div>
+        <div class="stat-value">12</div>
+        <div class="stat-sub"><span class="down">↓ 3</span> need attention</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header"><span>Active Tables</span><div class="stat-icon">🪑</div></div>
+        <div class="stat-value">8 / 15</div>
+        <div class="stat-sub">53% occupancy</div>
+      </div>
+    </div>
+
+    <!-- Table Map -->
+    <div class="section-row"><h2>Table Status</h2></div>
+    <div class="table-map">
+      <div class="table-chip occupied">T1 • 4</div>
+      <div class="table-chip occupied">T2 • 2</div>
+      <div class="table-chip available">T3</div>
+      <div class="table-chip occupied">T4 • 6</div>
+      <div class="table-chip available">T5</div>
+      <div class="table-chip occupied">T6 • 3</div>
+      <div class="table-chip available">T7</div>
+      <div class="table-chip occupied">T8 • 2</div>
+      <div class="table-chip occupied">T9 • 4</div>
+      <div class="table-chip available">T10</div>
+      <div class="table-chip occupied">T11 • 5</div>
+      <div class="table-chip occupied">T12 • 2</div>
+      <div class="table-chip available">T13</div>
+      <div class="table-chip available">T14</div>
+      <div class="table-chip available">T15</div>
+    </div>
+
+    <!-- Recent Orders -->
+    <div class="section-row">
+      <h2>Recent Orders</h2>
+      <button class="view-all">View All →</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Order</th><th>Table</th><th>Items</th><th>Amount</th><th>Status</th><th>Time</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="order-id">#1047</td>
+            <td>T4</td>
+            <td>Masala Dosa x2, Filter Coffee x2</td>
+            <td>₹420</td>
+            <td><span class="badge preparing"><span class="dot"></span> Preparing</span></td>
+            <td>7:32 PM</td>
+            <td class="table-actions"><button>View</button></td>
+          </tr>
+          <tr>
+            <td class="order-id">#1046</td>
+            <td>T9</td>
+            <td>Paneer Tikka, Butter Naan x2, Lassi</td>
+            <td>₹680</td>
+            <td><span class="badge ready"><span class="dot"></span> Ready</span></td>
+            <td>7:18 PM</td>
+            <td class="table-actions"><button>View</button></td>
+          </tr>
+          <tr>
+            <td class="order-id">#1045</td>
+            <td>T2</td>
+            <td>Veg Thali, Gulab Jamun x2</td>
+            <td>₹350</td>
+            <td><span class="badge served"><span class="dot"></span> Served</span></td>
+            <td>7:05 PM</td>
+            <td class="table-actions"><button>View</button></td>
+          </tr>
+          <tr>
+            <td class="order-id">#1044</td>
+            <td>T11</td>
+            <td>Chicken Biryani, Raita, Coke</td>
+            <td>₹520</td>
+            <td><span class="badge preparing"><span class="dot"></span> Preparing</span></td>
+            <td>6:55 PM</td>
+            <td class="table-actions"><button>View</button></td>
+          </tr>
+          <tr>
+            <td class="order-id">#1043</td>
+            <td>T6</td>
+            <td>Cold Coffee x2, Chocolate Cake</td>
+            <td>₹380</td>
+            <td><span class="badge ready"><span class="dot"></span> Ready</span></td>
+            <td>6:42 PM</td>
+            <td class="table-actions"><button>View</button></td>
+          </tr>
+          <tr>
+            <td class="order-id">#1042</td>
+            <td>T1</td>
+            <td>Samosa x4, Masala Chai x4</td>
+            <td>₹280</td>
+            <td><span class="badge served"><span class="dot"></span> Served</span></td>
+            <td>6:30 PM</td>
+            <td class="table-actions"><button>View</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="section-row"><h2>Quick Actions</h2></div>
+    <div class="actions-grid">
+      <div class="action-card">
+        <div class="action-icon">➕</div>
+        <h3>New Order</h3>
+        <p>Create a new dine-in or takeaway order</p>
+      </div>
+      <div class="action-card">
+        <div class="action-icon">🪑</div>
+        <h3>Assign Table</h3>
+        <p>Assign guests to an available table</p>
+      </div>
+      <div class="action-card">
+        <div class="action-icon">🧾</div>
+        <h3>Generate Bill</h3>
+        <p>Create bill for an active table</p>
+      </div>
+      <div class="action-card">
+        <div class="action-icon">📞</div>
+        <h3>Takeaway Order</h3>
+        <p>Quick order for pickup customers</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

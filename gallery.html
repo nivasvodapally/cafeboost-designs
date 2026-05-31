@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CafeBoost — 10 UI Design Concepts</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #f5f5f5; min-height: 100vh; }
+.header { text-align: center; padding: 60px 20px 40px; }
+.header h1 { font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #d4a574, #ff6b6b, #8b5cf6, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.header p { color: #888; margin-top: 8px; font-size: 0.95rem; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; max-width: 1200px; margin: 0 auto; padding: 20px 24px 80px; }
+.card { background: #141414; border: 1px solid #2a2a2a; border-radius: 16px; overflow: hidden; transition: all 0.3s ease; cursor: pointer; text-decoration: none; color: inherit; display: block; }
+.card:hover { transform: translateY(-6px); border-color: #444; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+.card-preview { height: 200px; position: relative; overflow: hidden; }
+.card-info { padding: 20px; }
+.card-info h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+.card-info p { font-size: 0.8rem; color: #888; line-height: 1.5; }
+.card-info .tag { display: inline-block; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 3px 8px; border-radius: 6px; margin-top: 10px; }
+/* Preview colors */
+.p1 { background: linear-gradient(135deg, #1a1410, #2a1f15, #d4a574); }
+.p2 { background: linear-gradient(135deg, #7c3aed, #2563eb, #0d9488); }
+.p3 { background: linear-gradient(135deg, #faf9f6, #e8e0d4, #c75b39); }
+.p4 { background: linear-gradient(135deg, #0a0a0a, #1a0a2e, #00f5ff); }
+.p5 { background: linear-gradient(135deg, #f7f3ed, #a3b18a, #6b4226); }
+.p6 { background: linear-gradient(135deg, #0d0d0d, #1a1a1a, #c9a84c); }
+.p7 { background: linear-gradient(135deg, #0f172a, #8b5cf6, #14b8a6); }
+.p8 { background: linear-gradient(135deg, #f5f5f0, #1a1a1a, #e63946); }
+.p9 { background: linear-gradient(135deg, #1a0a2e, #00d4ff, #39ff14); }
+.p10 { background: linear-gradient(135deg, #e0e0e0, #b0b0b0, #ff6b6b); }
+.tag-dark { background: #1a1a1a; color: #d4a574; }
+.tag-glass { background: rgba(139,92,246,0.2); color: #a78bfa; }
+.tag-scandi { background: #f5f0eb; color: #c75b39; }
+.tag-neon { background: #00f5ff15; color: #00f5ff; }
+.tag-botanical { background: #a3b18a20; color: #a3b18a; }
+.tag-gold { background: #c9a84c20; color: #c9a84c; }
+.tag-aurora { background: #8b5cf620; color: #a78bfa; }
+.tag-editorial { background: #e6394615; color: #e63946; }
+.tag-pixel { background: #39ff1415; color: #39ff14; }
+.tag-neuro { background: #ff6b6b15; color: #ff6b6b; }
+/* Mini preview elements */
+.mini-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; padding: 20px; }
+.mini-block { height: 40px; border-radius: 8px; background: rgba(255,255,255,0.1); }
+.mini-block.accent { background: rgba(255,255,255,0.2); }
+.mini-hero { height: 80px; margin: 20px; border-radius: 12px; background: rgba(255,255,255,0.08); }
+</style>
+</head>
+<body>
+<div class="header">
+<h1>CafeBoost — 10 UI Concepts</h1>
+<p>Click any card to preview the full design</p>
+</div>
+<div class="grid">
+<a class="card" href="design-01-dark-coffee.html">
+<div class="card-preview p1"><div class="mini-hero"></div><div class="mini-grid"><div class="mini-block"></div><div class="mini-block accent"></div><div class="mini-block"></div></div></div>
+<div class="card-info"><h3>01 — Dark Coffee House</h3><p>Espresso browns, warm amber accents, Playfair Display serif headings. Glassmorphism cards, floating coffee beans.</p><span class="tag tag-dark">Dark • Warm • Elegant</span></div>
+</a>
+<a class="card" href="design-02-glassmorphism.html">
+<div class="card-preview p2"><div class="mini-hero"></div><div class="mini-grid"><div class="mini-block"></div><div class="mini-block accent"></div><div class="mini-block"></div></div></div>
+<div class="card-info"><h3>02 — Glassmorphism</h3><p>Purple→blue→teal gradient mesh, frosted glass cards, floating orbs, Sora headings. Vibrant and modern.</p><span class="tag tag-glass">Glass • Gradient • Vibrant</span></div>
+</a>
+<a class="card" href="design-03-minimalist-scandi.html">
+<div class="card-preview p3"><div class="mini-hero"></div><div class="mini-grid"><div class="mini-block"></div><div class="mini-block accent"></div><div class="mini-block"></div></div></div>
+<div class="card-info"><h3>03 — Minimalist Scandinavian</h3><p>Off-white, warm grey, terracotta accent. Ultra-clean, numbered features, generous whitespace. Cormorant Garamond.</p><span class="tag tag-scandi">Clean • Warm • Serif</span></div>
+</a>
+<a class="card" href="design-04-neon-cyberpunk.html">
+<div class="card-preview p4"><div class="mini-hero"></div><div class="mini-grid"><div class="mini-block"></div><div class="mini-block accent"></div><div class="mini-block"></div></div></div>
+<div class="card-info"><h3>04 — Neon Cyberpunk</h3><p>Pure black, neon cyan/pink/purple. Glitch text, scanlines, grid overlay. Space Grotesk + JetBrains Mono.</p><span class="tag tag-neon">Neon • Bold • Retro-future</span></div>
+</a>
+<a class="card" href="design-05-botanical-warm.html">
+<div class="card-preview p5"><div class="mini-hero"></div><div class="mini-grid"><div class="mini-block"></div><div class="mini-block accent"></div><div class="mini-block"></div></div></div>
+<div class="card-info"><h3>05 — Botanical Warm</h3><p>Sage green, warm brown, dusty rose. Leaf decorations, organic shapes, parallax. Libre Baskerville serif.</p><span class="tag tag-botanical">Nature • Warm • Organic</span></div>
+</a>
+<a class="card" href="design-06-luxury-gold.html">
+<div class="card-preview p6"><div class="mini-hero"></div><div class="mini-grid"><div class="mini-block"></div><div class="mini-block accent"></div><div class="mini-block"></div></div></div>
+<div class="card-info"><h3>06 — Luxury Dark + Gold</h3><p>Deep black, rich gold accents, floating gold particles. Cormorant serif headings, shimmer buttons. Premium feel.</p><span class="tag tag-gold">Luxury • Gold • Premium</span></div>
+</a>
+<a class="card" href="design-07-aurora-mesh.html">
+<div class="card-preview p7"><div class="mini-hero"></div><div class="mini-grid"><div class="mini-block"></div><div class="mini-block accent"></div><div class="mini-block"></div></div></div>
+<div class="card-info"><h3>07 — Aurora Mesh</h3><p>Deep navy with animated gradient blobs in purple/blue/teal/pink. Morphing mesh, gradient text. Plus Jakarta Sans.</p><span class="tag tag-aurora">Aurora • Animated • Bold</span></div>
+</a>
+<a class="card" href="design-08-editorial-mono.html">
+<div class="card-preview p8"><div class="mini-hero"></div><div class="mini-grid"><div class="mini-block"></div><div class="mini-block accent"></div><div class="mini-block"></div></div></div>
+<div class="card-info"><h3>08 — Editorial Monochrome</h3><p>Black & white magazine style, vermillion red accent. Oversized Fraunces serif, pull-quote testimonials. Paper texture.</p><span class="tag tag-editorial">Editorial • Bold • Magazine</span></div>
+</a>
+<a class="card" href="design-09-retro-pixel.html">
+<div class="card-preview p9"><div class="mini-hero"></div><div class="mini-grid"><div class="mini-block"></div><div class="mini-block accent"></div><div class="mini-block"></div></div></div>
+<div class="card-info"><h3>09 — Retro Pixel</h3><p>Dark purple, electric blue/green/yellow. Pixel art coffee cup, CRT scanlines, star field. Press Start 2P font.</p><span class="tag tag-pixel">Pixel • Arcade • Fun</span></div>
+</a>
+<a class="card" href="design-10-neumorphic-depth.html">
+<div class="card-preview p10"><div class="mini-hero"></div><div class="mini-grid"><div class="mini-block"></div><div class="mini-block accent"></div><div class="mini-block"></div></div></div>
+<div class="card-info"><h3>10 — Neumorphic Depth</h3><p>Soft grey with embossed/debossed 3D effects, coral accent. Light/dark toggle, parallax hover. Manrope headings.</p><span class="tag tag-neuro">3D • Soft • Tactile</span></div>
+</a>
+</div>
+</body>
+</html>

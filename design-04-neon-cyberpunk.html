@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CafeBoost — Cafe Management SaaS</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ========== RESET & BASE ========== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: #0a0a0a;
+  color: #e0e0e0;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+
+/* ========== SCANLINE OVERLAY ========== */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ========== NEON COLORS ========== */
+:root {
+  --cyan: #00f5ff;
+  --pink: #ff006e;
+  --purple: #8b5cf6;
+  --dark: #0a0a0a;
+  --glass: rgba(255,255,255,0.03);
+  --glass-border: rgba(255,255,255,0.06);
+}
+
+/* ========== ANIMATED NEON GRADIENT BORDER ========== */
+@keyframes neonBorderGlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.neon-border-animated {
+  position: relative;
+  background: #111;
+  border-radius: 16px;
+}
+.neon-border-animated::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 18px;
+  background: linear-gradient(90deg, var(--cyan), var(--purple), var(--pink), var(--cyan));
+  background-size: 300% 100%;
+  animation: neonBorderGlow 4s ease infinite;
+  z-index: -1;
+  opacity: 0.7;
+}
+
+/* ========== GLITCH EFFECT ========== */
+@keyframes glitch1 {
+  0%, 100% { clip-path: inset(0 0 0 0); transform: translate(0); }
+  20% { clip-path: inset(20% 0 60% 0); transform: translate(-3px, 2px); }
+  40% { clip-path: inset(40% 0 30% 0); transform: translate(3px, -1px); }
+  60% { clip-path: inset(60% 0 10% 0); transform: translate(-2px, 1px); }
+  80% { clip-path: inset(10% 0 80% 0); transform: translate(2px, -2px); }
+}
+@keyframes glitch2 {
+  0%, 100% { clip-path: inset(0 0 0 0); transform: translate(0); }
+  20% { clip-path: inset(50% 0 20% 0); transform: translate(3px, -2px); }
+  40% { clip-path: inset(10% 0 70% 0); transform: translate(-3px, 1px); }
+  60% { clip-path: inset(70% 0 5% 0); transform: translate(2px, -1px); }
+  80% { clip-path: inset(30% 0 40% 0); transform: translate(-2px, 2px); }
+}
+.glitch {
+  position: relative;
+  display: inline-block;
+}
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+}
+.glitch::before {
+  color: var(--cyan);
+  animation: glitch1 3s infinite linear;
+  z-index: -1;
+}
+.glitch::after {
+  color: var(--pink);
+  animation: glitch2 3s infinite linear;
+  z-index: -1;
+}
+
+/* ========== PULSE BADGE ========== */
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 5px var(--pink), 0 0 10px var(--pink); }
+  50% { box-shadow: 0 0 15px var(--pink), 0 0 30px var(--pink), 0 0 45px var(--pink); }
+}
+.pulse-badge {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* ========== NEON GLOW BUTTONS ========== */
+.btn-neon {
+  display: inline-block;
+  padding: 14px 36px;
+  border-radius: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+  position: relative;
+}
+.btn-neon-cyan {
+  background: transparent;
+  border: 2px solid var(--cyan);
+  color: var(--cyan);
+  box-shadow: 0 0 10px rgba(0,245,255,0.3), inset 0 0 10px rgba(0,245,255,0.1);
+}
+.btn-neon-cyan:hover {
+  background: var(--cyan);
+  color: #0a0a0a;
+  box-shadow: 0 0 20px rgba(0,245,255,0.6), 0 0 40px rgba(0,245,255,0.3);
+}
+.btn-neon-pink {
+  background: transparent;
+  border: 2px solid var(--pink);
+  color: var(--pink);
+  box-shadow: 0 0 10px rgba(255,0,110,0.3), inset 0 0 10px rgba(255,0,110,0.1);
+}
+.btn-neon-pink:hover {
+  background: var(--pink);
+  color: #0a0a0a;
+  box-shadow: 0 0 20px rgba(255,0,110,0.6), 0 0 40px rgba(255,0,110,0.3);
+}
+.btn-neon-purple {
+  background: var(--purple);
+  border: 2px solid var(--purple);
+  color: #fff;
+  box-shadow: 0 0 15px rgba(139,92,246,0.4);
+}
+.btn-neon-purple:hover {
+  box-shadow: 0 0 25px rgba(139,92,246,0.7), 0 0 50px rgba(139,92,246,0.3);
+}
+
+/* ========== FADE-IN ANIMATION ========== */
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ========== GRID LINES PATTERN ========== */
+.grid-pattern {
+  background-image:
+    linear-gradient(rgba(0,245,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,245,255,0.05) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* ========== NAV ========== */
+nav {
+  position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+  background: rgba(10,10,10,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 0 24px;
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+.nav-logo {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.4rem; font-weight: 700;
+  color: var(--cyan);
+  text-shadow: 0 0 10px rgba(0,245,255,0.5);
+}
+.nav-links { display: flex; gap: 32px; align-items: center; }
+.nav-links a {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem; color: #999;
+  transition: color 0.3s;
+}
+.nav-links a:hover { color: var(--cyan); }
+.nav-btns { display: flex; gap: 12px; align-items: center; }
+.nav-btns .btn-neon { padding: 8px 20px; font-size: 0.85rem; }
+.mobile-toggle { display: none; background: none; border: none; cursor: pointer; }
+.mobile-toggle span {
+  display: block; width: 24px; height: 2px;
+  background: var(--cyan); margin: 5px 0;
+  transition: 0.3s;
+}
+
+/* ========== HERO ========== */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  padding: 100px 24px 60px;
+  overflow: hidden;
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,245,255,0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,245,255,0.07) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+}
+.hero-glow {
+  position: absolute;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.15;
+}
+.hero-glow-1 { background: var(--cyan); top: -200px; left: -100px; }
+.hero-glow-2 { background: var(--pink); bottom: -200px; right: -100px; }
+.hero-glow-3 { background: var(--purple); top: 50%; left: 50%; transform: translate(-50%, -50%); }
+
+.hero-content {
+  position: relative; z-index: 2;
+  max-width: 800px; text-align: center;
+}
+.hero-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--pink);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 24px;
+  text-shadow: 0 0 10px rgba(255,0,110,0.5);
+}
+.hero h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: #fff;
+  margin-bottom: 24px;
+}
+.hero h1 .accent { color: var(--cyan); }
+.hero p {
+  font-size: 1.15rem;
+  color: #aaa;
+  max-width: 600px;
+  margin: 0 auto 40px;
+}
+.hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.hero-stats {
+  display: flex; gap: 48px; justify-content: center;
+  margin-top: 56px; flex-wrap: wrap;
+}
+.hero-stat { text-align: center; }
+.hero-stat .num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2rem; font-weight: 700;
+  color: var(--cyan);
+  text-shadow: 0 0 15px rgba(0,245,255,0.5);
+}
+.hero-stat .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+/* ========== SECTIONS ========== */
+section {
+  padding: 100px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.section-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--pink);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.section-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 16px;
+}
+.section-sub {
+  text-align: center;
+  color: #888;
+  max-width: 550px;
+  margin: 0 auto 60px;
+  font-size: 1rem;
+}
+
+/* ========== FEATURE CARDS ========== */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.feature-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 36px 28px;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+.feature-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 16px;
+  padding: 1px;
+  background: linear-gradient(135deg, transparent 40%, var(--cyan) 50%, transparent 60%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.feature-card:hover::before { opacity: 1; }
+.feature-card:hover {
+  background: rgba(0,245,255,0.03);
+  box-shadow: 0 0 30px rgba(0,245,255,0.08);
+  transform: translateY(-4px);
+}
+.feature-icon {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  background: rgba(0,245,255,0.08);
+  border: 1px solid rgba(0,245,255,0.15);
+}
+.feature-card h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 10px;
+}
+.feature-card p {
+  font-size: 0.9rem;
+  color: #888;
+  line-height: 1.6;
+}
+
+/* ========== PRICING ========== */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  align-items: stretch;
+}
+.pricing-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 40px 32px;
+  text-align: center;
+  position: relative;
+  transition: all 0.4s;
+  display: flex;
+  flex-direction: column;
+}
+.pricing-card.featured {
+  border: 2px solid var(--purple);
+  box-shadow: 0 0 30px rgba(139,92,246,0.2);
+  background: rgba(139,92,246,0.04);
+}
+.pricing-card.featured::before {
+  content: 'Most Popular';
+  position: absolute;
+  top: -14px; left: 50%; transform: translateX(-50%);
+  background: var(--pink);
+  color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 5px 18px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.pricing-card:hover {
+  transform: translateY(-4px);
+}
+.pricing-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+.pricing-price {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+.pricing-price span { font-size: 1rem; color: #666; font-weight: 400; }
+.pricing-period {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 28px;
+}
+.pricing-features {
+  text-align: left;
+  margin-bottom: 32px;
+  flex-grow: 1;
+}
+.pricing-features li {
+  font-size: 0.9rem;
+  color: #aaa;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pricing-features li::before {
+  content: '✦';
+  color: var(--cyan);
+  font-size: 0.7rem;
+}
+.pricing-card .btn-neon { width: 100%; }
+
+/* ========== TESTIMONIALS ========== */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.testimonial-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 32px;
+  position: relative;
+  transition: all 0.4s;
+}
+.testimonial-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 32px; right: 32px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--cyan), var(--purple));
+  border-radius: 2px;
+}
+.testimonial-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 20px rgba(0,245,255,0.06);
+}
+.testimonial-stars {
+  color: var(--cyan);
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+  text-shadow: 0 0 8px rgba(0,245,255,0.4);
+}
+.testimonial-card blockquote {
+  font-size: 0.95rem;
+  color: #bbb;
+  line-height: 1.7;
+  margin-bottom: 20px;
+  font-style: italic;
+}
+.testimonial-author {
+  display: flex; align-items: center; gap: 12px;
+}
+.testimonial-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--cyan), var(--purple));
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700; font-size: 0.85rem;
+  color: #0a0a0a;
+}
+.testimonial-info .name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600; color: #fff; font-size: 0.9rem;
+}
+.testimonial-info .role {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem; color: #666;
+}
+
+/* ========== CTA ========== */
+.cta-section {
+  text-align: center;
+  padding: 80px 24px 100px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.cta-section h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 16px;
+}
+.cta-section p {
+  color: #888;
+  margin-bottom: 36px;
+  font-size: 1.05rem;
+}
+
+/* ========== FOOTER ========== */
+footer {
+  border-top: 1px solid var(--glass-border);
+  padding: 60px 24px 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 48px;
+}
+.footer-brand .nav-logo { margin-bottom: 12px; display: inline-block; }
+.footer-brand p { font-size: 0.85rem; color: #666; max-width: 280px; }
+.footer-col h4 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.9rem; font-weight: 600;
+  color: #fff; margin-bottom: 16px;
+}
+.footer-col a {
+  display: block;
+  font-size: 0.85rem;
+  color: #666;
+  padding: 4px 0;
+  transition: color 0.3s;
+}
+.footer-col a:hover { color: var(--cyan); }
+.footer-bottom {
+  border-top: 1px solid var(--glass-border);
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #444;
+}
+.footer-bottom a { color: #666; }
+.footer-bottom a:hover { color: var(--cyan); }
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 900px) {
+  .features-grid, .pricing-grid, .testimonials-grid {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .nav-links { display: none; }
+  .mobile-toggle { display: block; }
+  .nav-links.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 64px; left: 0; right: 0;
+    background: rgba(10,10,10,0.95);
+    backdrop-filter: blur(20px);
+    padding: 24px;
+    gap: 16px;
+    border-bottom: 1px solid var(--glass-border);
+  }
+}
+@media (max-width: 600px) {
+  .hero-stats { gap: 24px; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+  .pricing-card { padding: 32px 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">⚡ CafeBoost</a>
+    <div class="nav-links" id="navLinks">
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#customers">Customers</a>
+    </div>
+    <div class="nav-btns">
+      <a href="#" class="btn-neon btn-neon-cyan" style="padding:8px 20px;font-size:0.85rem;">Sign in</a>
+      <a href="#" class="btn-neon btn-neon-purple" style="padding:8px 20px;font-size:0.85rem;">Start Free</a>
+    </div>
+    <button class="mobile-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero grid-pattern">
+  <div class="hero-glow hero-glow-1"></div>
+  <div class="hero-glow hero-glow-2"></div>
+  <div class="hero-glow hero-glow-3"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content fade-in">
+    <div class="hero-tag">// cafe management, reimagined</div>
+    <h1>Increase Repeat Customers for Your Cafe <span class="accent glitch" data-text="☕">☕</span></h1>
+    <p>Loyalty rewards, table bookings, CRM, and QR ordering — everything you need to turn one-time visitors into regulars.</p>
+    <div class="hero-btns">
+      <a href="#" class="btn-neon btn-neon-cyan">Start Free Trial</a>
+      <a href="#features" class="btn-neon btn-neon-pink">Explore Features</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="num">2,400+</div>
+        <div class="label">Cafes Powered</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">38%</div>
+        <div class="label">Avg. Repeat Lift</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">₹14Cr+</div>
+        <div class="label">Revenue Tracked</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="fade-in">
+    <div class="section-tag">Features</div>
+    <h2 class="section-title">Everything Your Cafe Needs</h2>
+    <p class="section-sub">Six powerful modules that work together to grow your business on autopilot.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card fade-in">
+      <div class="feature-icon">🎯</div>
+      <h3>Loyalty Rewards</h3>
+      <p>Points, stamps, and tiered rewards that keep customers coming back. Fully customizable programs.</p>
+    </div>
+    <div class="feature-card fade-in">
+      <div class="feature-icon">📱</div>
+      <h3>QR Table Ordering</h3>
+      <p>Customers scan, browse, and order from their table. No app download needed. Faster service, fewer errors.</p>
+    </div>
+    <div class="feature-card fade-in">
+      <div class="feature-icon">📅</div>
+      <h3>Smart Bookings</h3>
+      <p>Online reservations with auto-confirmation, waitlist management, and no-show prevention.</p>
+    </div>
+    <div class="feature-card fade-in">
+      <div class="feature-icon">👥</div>
+      <h3>Customer CRM</h3>
+      <p>Know your regulars by name. Track visit frequency, preferences, and spending patterns automatically.</p>
+    </div>
+    <div class="feature-card fade-in">
+      <div class="feature-icon">📣</div>
+      <h3>Auto Marketing</h3>
+      <p>WhatsApp & SMS campaigns triggered by customer behavior. Win back lapsed visitors automatically.</p>
+    </div>
+    <div class="feature-card fade-in">
+      <div class="feature-icon">📊</div>
+      <h3>Live Insights</h3>
+      <p>Real-time dashboards showing revenue, popular items, peak hours, and customer lifetime value.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="fade-in">
+    <div class="section-tag">Pricing</div>
+    <h2 class="section-title">Simple, Transparent Plans</h2>
+    <p class="section-sub">Start free, scale as you grow. No hidden fees, cancel anytime.</p>
+  </div>
+  <div class="pricing-grid">
+    <div class="pricing-card fade-in">
+      <div class="pricing-name">Starter</div>
+      <div class="pricing-price">₹999<span>/mo</span></div>
+      <div class="pricing-period">Perfect for single outlets</div>
+      <ul class="pricing-features">
+        <li>Up to 500 customers</li>
+        <li>Loyalty rewards program</li>
+        <li>QR ordering (1 menu)</li>
+        <li>Basic CRM</li>
+        <li>Email support</li>
+      </ul>
+      <a href="#" class="btn-neon btn-neon-cyan">Get Started</a>
+    </div>
+    <div class="pricing-card featured fade-in pulse-badge">
+      <div class="pricing-name">Growth</div>
+      <div class="pricing-price">₹2,499<span>/mo</span></div>
+      <div class="pricing-period">Best for growing cafes</div>
+      <ul class="pricing-features">
+        <li>Unlimited customers</li>
+        <li>Advanced loyalty tiers</li>
+        <li>QR ordering + smart bookings</li>
+        <li>Auto marketing campaigns</li>
+        <li>Live analytics dashboard</li>
+        <li>Priority support</li>
+      </ul>
+      <a href="#" class="btn-neon btn-neon-purple">Get Started</a>
+    </div>
+    <div class="pricing-card fade-in">
+      <div class="pricing-name">Roastery</div>
+      <div class="pricing-price">₹4,999<span>/mo</span></div>
+      <div class="pricing-period">Multi-location chains</div>
+      <ul class="pricing-features">
+        <li>Everything in Growth</li>
+        <li>Unlimited outlets</li>
+        <li>Centralized dashboard</li>
+        <li>Custom integrations</li>
+        <li>Dedicated account manager</li>
+        <li>White-label option</li>
+      </ul>
+      <a href="#" class="btn-neon btn-neon-cyan">Contact Sales</a>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="customers">
+  <div class="fade-in">
+    <div class="section-tag">Customers</div>
+    <h2 class="section-title">Loved by Cafe Owners</h2>
+    <p class="section-sub">See what cafe owners across India are saying about CafeBoost.</p>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testimonial-card fade-in">
+      <div class="testimonial-stars">★★★★★</div>
+      <blockquote>"CafeBoost increased our repeat customers by 42% in just 3 months. The loyalty program practically runs itself. Our regulars love the QR ordering."</blockquote>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">PR</div>
+        <div class="testimonial-info">
+          <div class="name">Priya Raghavan</div>
+          <div class="role">Owner, Brew & Co — Chennai</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card fade-in">
+      <div class="testimonial-stars">★★★★★</div>
+      <blockquote>"The auto marketing feature is a game-changer. We recover 25+ lapsed customers every week with personalized WhatsApp messages. Worth every rupee."</blockquote>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">AK</div>
+        <div class="testimonial-info">
+          <div class="name">Arjun Krishnan</div>
+          <div class="role">Founder, Third Wave Koramangala — Bangalore</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card fade-in">
+      <div class="testimonial-stars">★★★★★</div>
+      <blockquote>"We switched from a generic POS to CafeBoost and saw table turnover improve by 30%. The smart bookings eliminated our no-show problem completely."</blockquote>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">SM</div>
+        <div class="testimonial-info">
+          <div class="name">Sneha Mehta</div>
+          <div class="role">Manager, Roast Republic — Hyderabad</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section fade-in">
+  <div class="section-tag">Get Started</div>
+  <h2>Ready to grow your cafe?</h2>
+  <p>Join 2,400+ cafes already boosting their revenue with CafeBoost. Start your free trial today — no credit card required.</p>
+  <a href="#" class="btn-neon btn-neon-cyan" style="font-size:1.1rem;padding:16px 48px;">Start Free Trial</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="#" class="nav-logo">⚡ CafeBoost</a>
+      <p>The all-in-one cafe management platform built for Indian cafes. Loyalty, ordering, CRM, and more.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <a href="#">Features</a>
+      <a href="#">Pricing</a>
+      <a href="#">Integrations</a>
+      <a href="#">API Docs</a>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="#">About Us</a>
+      <a href="#">Blog</a>
+      <a href="#">Careers</a>
+      <a href="#">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Refund Policy</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 CafeBoost. All rights reserved.</span>
+    <span>Made with ⚡ in India</span>
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script>
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+    document.getElementById('navLinks').classList.remove('open');
+  });
+});
+
+// Fade-in on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

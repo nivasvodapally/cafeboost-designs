@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CafeBoost — Loyalty Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: #EDE9FE; color: #2E1065; min-height: 100vh; }
+
+/* NAV */
+nav { background: #2E1065; padding: 16px 32px; display: flex; justify-content: space-between; align-items: center; }
+.logo { font-family: 'Playfair Display', serif; font-size: 24px; color: #A78BFA; font-weight: 700; }
+.logo span { color: #fff; }
+.nav-right { display: flex; align-items: center; gap: 16px; }
+.nav-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, #7C3AED, #A78BFA); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 15px; }
+.nav-name { color: rgba(255,255,255,0.7); font-size: 14px; }
+
+/* CONTAINER */
+.container { max-width: 900px; margin: 0 auto; padding: 32px 24px; }
+
+/* POINTS HERO */
+.points-hero { background: linear-gradient(135deg, #2E1065, #4C1D95, #7C3AED); border-radius: 28px; padding: 48px; text-align: center; color: #fff; position: relative; overflow: hidden; margin-bottom: 32px; }
+.points-hero::before { content: ''; position: absolute; top: -50%; right: -30%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(167,139,250,0.2), transparent 70%); border-radius: 50%; }
+.points-hero::after { content: ''; position: absolute; bottom: -40%; left: -20%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(124,58,237,0.15), transparent 70%); border-radius: 50%; }
+.points-label { font-size: 14px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: #A78BFA; margin-bottom: 12px; position: relative; }
+.points-number { font-family: 'Playfair Display', serif; font-size: clamp(56px, 10vw, 96px); font-weight: 700; line-height: 1; margin-bottom: 8px; position: relative; background: linear-gradient(135deg, #fff, #A78BFA); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.points-suffix { font-family: 'Inter', sans-serif; font-size: 18px; color: rgba(255,255,255,0.5); position: relative; }
+.points-sub { font-size: 14px; color: rgba(255,255,255,0.4); margin-top: 8px; position: relative; }
+
+/* TIER PROGRESS */
+.tier-section { background: #fff; border-radius: 24px; padding: 32px; margin-bottom: 32px; box-shadow: 0 4px 30px rgba(46,16,101,0.06); }
+.tier-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+.tier-header h2 { font-family: 'Playfair Display', serif; font-size: 22px; }
+.tier-badge { background: linear-gradient(135deg, #7C3AED, #A78BFA); color: #fff; padding: 6px 18px; border-radius: 50px; font-size: 13px; font-weight: 700; }
+.tier-track { display: flex; align-items: center; gap: 0; margin-bottom: 12px; position: relative; }
+.tier-node { display: flex; flex-direction: column; align-items: center; flex: 1; z-index: 2; }
+.tier-dot { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 8px; transition: all 0.3s; }
+.tier-dot.completed { background: linear-gradient(135deg, #7C3AED, #A78BFA); color: #fff; box-shadow: 0 4px 15px rgba(124,58,237,0.3); }
+.tier-dot.current { background: linear-gradient(135deg, #7C3AED, #A78BFA); color: #fff; box-shadow: 0 0 20px rgba(124,58,237,0.5); animation: pulse 2s ease-in-out infinite; }
+.tier-dot.locked { background: #EDE9FE; color: #A78BFA; }
+@keyframes pulse { 0%,100%{box-shadow:0 0 20px rgba(124,58,237,0.3)} 50%{box-shadow:0 0 30px rgba(124,58,237,0.6)} }
+.tier-name { font-size: 13px; font-weight: 600; color: #4C1D95; }
+.tier-name.locked-text { color: rgba(46,16,101,0.3); }
+.tier-bar-track { position: absolute; top: 20px; left: 40px; right: 40px; height: 4px; background: #EDE9FE; border-radius: 2px; z-index: 1; }
+.tier-bar-fill { height: 100%; background: linear-gradient(90deg, #7C3AED, #A78BFA); border-radius: 2px; width: 0%; transition: width 1.5s ease; }
+.tier-info { text-align: center; font-size: 14px; color: rgba(46,16,101,0.5); }
+.tier-info strong { color: #7C3AED; }
+
+/* REWARDS */
+.rewards-section { margin-bottom: 32px; }
+.section-title { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 20px; }
+.rewards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 18px; }
+.reward-card { background: #fff; border-radius: 20px; padding: 28px 22px; text-align: center; border: 2px solid transparent; transition: all 0.3s; cursor: pointer; position: relative; overflow: hidden; }
+.reward-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(46,16,101,0.1); border-color: #A78BFA; }
+.reward-card.redeemed { opacity: 0.5; }
+.reward-card.redeemed::after { content: 'Redeemed'; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) rotate(-15deg); font-size: 20px; font-weight: 800; color: rgba(46,16,101,0.15); letter-spacing: 2px; }
+.reward-emoji { font-size: 48px; margin-bottom: 14px; display: block; }
+.reward-name { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+.reward-desc { font-size: 13px; color: rgba(46,16,101,0.5); margin-bottom: 16px; line-height: 1.5; }
+.reward-pts { display: inline-block; background: #EDE9FE; color: #7C3AED; padding: 6px 16px; border-radius: 50px; font-size: 13px; font-weight: 700; margin-bottom: 14px; }
+.reward-btn { width: 100%; padding: 12px; border: none; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.3s; font-family: 'Inter', sans-serif; }
+.reward-btn.available { background: linear-gradient(135deg, #7C3AED, #A78BFA); color: #fff; }
+.reward-btn.available:hover { box-shadow: 0 4px 20px rgba(124,58,237,0.4); }
+.reward-btn.insufficient { background: #EDE9FE; color: rgba(46,16,101,0.3); cursor: not-allowed; }
+
+/* ACTIVITY */
+.activity-section { background: #fff; border-radius: 24px; padding: 32px; box-shadow: 0 4px 30px rgba(46,16,101,0.06); margin-bottom: 32px; }
+.activity-list { list-style: none; }
+.activity-item { display: flex; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid rgba(46,16,101,0.06); }
+.activity-item:last-child { border-bottom: none; }
+.activity-icon { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+.activity-icon.earn { background: #EDE9FE; }
+.activity-icon.redeem { background: #FEF3C7; }
+.activity-text { flex: 1; }
+.activity-title { font-size: 14px; font-weight: 600; }
+.activity-date { font-size: 12px; color: rgba(46,16,101,0.4); }
+.activity-pts { font-size: 15px; font-weight: 700; }
+.activity-pts.positive { color: #10B981; }
+.activity-pts.negative { color: #EF4444; }
+
+/* MEMBER INFO */
+.member-section { background: linear-gradient(135deg, #2E1065, #4C1D95); border-radius: 24px; padding: 32px; color: #fff; display: flex; align-items: center; gap: 24px; }
+.member-avatar { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #7C3AED, #A78BFA); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; flex-shrink: 0; }
+.member-name { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 4px; }
+.member-email { font-size: 14px; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+.member-since { font-size: 12px; color: rgba(255,255,255,0.3); }
+
+/* TOAST */
+.toast { position: fixed; top: 24px; right: 24px; background: #2E1065; color: #fff; padding: 16px 28px; border-radius: 16px; font-size: 15px; font-weight: 600; z-index: 200; transform: translateY(-120%); transition: transform 0.4s cubic-bezier(0.22,1,0.36,1); box-shadow: 0 8px 30px rgba(46,16,101,0.3); border-left: 4px solid #A78BFA; }
+.toast.show { transform: translateY(0); }
+
+@media (max-width: 600px) {
+  .points-hero { padding: 32px 20px; }
+  .rewards-grid { grid-template-columns: repeat(2, 1fr); }
+  .member-section { flex-direction: column; text-align: center; }
+  .tier-track { flex-wrap: wrap; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Cafe<span>Boost</span></div>
+  <div class="nav-right">
+    <span class="nav-name">Priya Sharma</span>
+    <div class="nav-avatar">PS</div>
+  </div>
+</nav>
+
+<div class="container">
+  <!-- Points Hero -->
+  <div class="points-hero">
+    <div class="points-label">Your Reward Points</div>
+    <div class="points-number" id="pointsNum">0</div>
+    <div class="points-suffix">points</div>
+    <div class="points-sub">Worth approximately ₹234 in rewards</div>
+  </div>
+
+  <!-- Tier Progress -->
+  <div class="tier-section">
+    <div class="tier-header">
+      <h2>Your Tier Status</h2>
+      <div class="tier-badge">🥈 Silver Member</div>
+    </div>
+    <div class="tier-track">
+      <div class="tier-bar-track"><div class="tier-bar-fill" id="tierFill"></div></div>
+      <div class="tier-node">
+        <div class="tier-dot completed">✓</div>
+        <div class="tier-name">Bronze</div>
+      </div>
+      <div class="tier-node">
+        <div class="tier-dot current">🥈</div>
+        <div class="tier-name">Silver</div>
+      </div>
+      <div class="tier-node">
+        <div class="tier-dot locked">🥇</div>
+        <div class="tier-name locked-text">Gold</div>
+      </div>
+      <div class="tier-node">
+        <div class="tier-dot locked">💎</div>
+        <div class="tier-name locked-text">Platinum</div>
+      </div>
+    </div>
+    <div class="tier-info">Earn <strong>660 more points</strong> to reach Gold tier</div>
+  </div>
+
+  <!-- Rewards -->
+  <div class="rewards-section">
+    <h2 class="section-title">🎁 Available Rewards</h2>
+    <div class="rewards-grid">
+      <div class="reward-card">
+        <span class="reward-emoji">☕</span>
+        <div class="reward-name">Free Coffee</div>
+        <div class="reward-desc">Any coffee of your choice, hot or iced</div>
+        <div class="reward-pts">200 pts</div>
+        <button class="reward-btn available" onclick="redeem(this, 'Free Coffee', 200)">Redeem</button>
+      </div>
+      <div class="reward-card">
+        <span class="reward-emoji">🍰</span>
+        <div class="reward-name">Free Dessert</div>
+        <div class="reward-desc">Pick any dessert from our bakery selection</div>
+        <div class="reward-pts">300 pts</div>
+        <button class="reward-btn available" onclick="redeem(this, 'Free Dessert', 300)">Redeem</button>
+      </div>
+      <div class="reward-card">
+        <span class="reward-emoji">🏷️</span>
+        <div class="reward-name">20% Off</div>
+        <div class="reward-desc">20% off your entire next order</div>
+        <div class="reward-pts">500 pts</div>
+        <button class="reward-btn available" onclick="redeem(this, '20% Off', 500)">Redeem</button>
+      </div>
+      <div class="reward-card">
+        <span class="reward-emoji">🎂</span>
+        <div class="reward-name">Birthday Special</div>
+        <div class="reward-desc">Free cake + coffee combo on your birthday</div>
+        <div class="reward-pts">1000 pts</div>
+        <button class="reward-btn insufficient">Need 1000 pts</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Activity -->
+  <div class="activity-section">
+    <h2 class="section-title">📋 Recent Activity</h2>
+    <ul class="activity-list">
+      <li class="activity-item">
+        <div class="activity-icon earn">☕</div>
+        <div class="activity-text"><div class="activity-title">Cappuccino ordered</div><div class="activity-date">Today, 10:30 AM</div></div>
+        <div class="activity-pts positive">+28</div>
+      </li>
+      <li class="activity-item">
+        <div class="activity-icon redeem">🎁</div>
+        <div class="activity-text"><div class="activity-title">Free Coffee redeemed</div><div class="activity-date">Yesterday, 4:15 PM</div></div>
+        <div class="activity-pts negative">-200</div>
+      </li>
+      <li class="activity-item">
+        <div class="activity-icon earn">🥪</div>
+        <div class="activity-text"><div class="activity-title">Paneer Sandwich ordered</div><div class="activity-date">May 25, 1:00 PM</div></div>
+        <div class="activity-pts positive">+32</div>
+      </li>
+      <li class="activity-item">
+        <div class="activity-icon earn">🫖</div>
+        <div class="activity-text"><div class="activity-title">Masala Chai × 2</div><div class="activity-date">May 24, 9:45 AM</div></div>
+        <div class="activity-pts positive">+24</div>
+      </li>
+      <li class="activity-item">
+        <div class="activity-icon earn">🍰</div>
+        <div class="activity-text"><div class="activity-title">Tiramisu ordered</div><div class="activity-date">May 22, 7:30 PM</div></div>
+        <div class="activity-pts positive">+35</div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Member Info -->
+  <div class="member-section">
+    <div class="member-avatar">PS</div>
+    <div>
+      <div class="member-name">Priya Sharma</div>
+      <div class="member-email">priya.sharma@email.com</div>
+      <div class="member-since">Member since January 2025 • Silver Tier</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// Animate points counter
+const targetPoints = 2340;
+const pointsEl = document.getElementById('pointsNum');
+let current = 0;
+const duration = 2000;
+const startTime = performance.now();
+
+function animatePoints(now) {
+  const elapsed = now - startTime;
+  const progress = Math.min(elapsed / duration, 1);
+  const eased = 1 - Math.pow(1 - progress, 3);
+  current = Math.floor(eased * targetPoints);
+  pointsEl.textContent = current.toLocaleString('en-IN');
+  if (progress < 1) requestAnimationFrame(animatePoints);
+}
+requestAnimationFrame(animatePoints);
+
+// Tier bar animation
+setTimeout(() => {
+  document.getElementById('tierFill').style.width = '42%';
+}, 500);
+
+// Redeem
+function redeem(btn, name, pts) {
+  const card = btn.closest('.reward-card');
+  card.classList.add('redeemed');
+  btn.textContent = 'Redeemed ✓';
+  btn.disabled = true;
+  btn.className = 'reward-btn insufficient';
+  showToast(`🎉 ${name} redeemed for ${pts} points!`);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>

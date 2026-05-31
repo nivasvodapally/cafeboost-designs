@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CafeBoost — Admin Analytics</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0D0D0D;--surface:#1A1A1A;--card:#262626;--green:#22C55E;--green-light:#4ADE80;--white:#fff;--gray-400:#9ca3af;--gray-500:#6b7280;--gray-600:#4b5563;--text:#e5e7eb;--text-dim:#9ca3af}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;-webkit-font-smoothing:antialiased}
+
+/* Sidebar */
+.sidebar{width:260px;background:var(--surface);border-right:1px solid rgba(255,255,255,.06);padding:24px 0;display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh}
+.sidebar-logo{padding:0 24px 28px;font-size:22px;font-weight:800;letter-spacing:-.5px}
+.sidebar-logo span{color:var(--green)}
+.nav-section{padding:0 12px;margin-bottom:8px}
+.nav-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--gray-500);padding:0 12px;margin-bottom:8px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;font-size:14px;color:var(--text-dim);cursor:pointer;transition:all .2s;font-weight:500}
+.nav-item:hover{background:rgba(34,197,94,.08);color:var(--text)}
+.nav-item.active{background:rgba(34,197,94,.12);color:var(--green)}
+.nav-item .icon{font-size:18px;width:24px;text-align:center}
+.nav-spacer{flex:1}
+.sidebar-footer{padding:16px 24px;border-top:1px solid rgba(255,255,255,.06)}
+.user-row{display:flex;align-items:center;gap:10px}
+.user-avatar{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--green),#16a34a);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#000}
+.user-name{font-size:13px;font-weight:600}
+.user-role{font-size:11px;color:var(--gray-500)}
+
+/* Main */
+.main{flex:1;padding:32px;overflow-y:auto}
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px}
+.page-title{font-size:26px;font-weight:800;letter-spacing:-.5px}
+.period-tabs{display:flex;gap:4px;background:var(--surface);padding:4px;border-radius:12px}
+.period-tab{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--text-dim);border:none;background:none;font-family:inherit}
+.period-tab.active{background:var(--green);color:#000}
+.period-tab:hover:not(.active){background:rgba(255,255,255,.06)}
+
+/* KPI Cards */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.kpi-card{background:var(--surface);border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,.04);transition:all .3s;animation:slideUp .5s ease both}
+.kpi-card:nth-child(1){animation-delay:.05s}
+.kpi-card:nth-child(2){animation-delay:.1s}
+.kpi-card:nth-child(3){animation-delay:.15s}
+.kpi-card:nth-child(4){animation-delay:.2s}
+.kpi-card:hover{border-color:rgba(34,197,94,.2);transform:translateY(-2px)}
+.kpi-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.kpi-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;background:rgba(34,197,94,.1)}
+.kpi-change{font-size:12px;font-weight:700;padding:3px 8px;border-radius:6px}
+.kpi-change.up{background:rgba(34,197,94,.12);color:var(--green)}
+.kpi-change.down{background:rgba(239,68,68,.12);color:#ef4444}
+.kpi-value{font-size:30px;font-weight:800;letter-spacing:-1px}
+.kpi-label{font-size:12px;color:var(--gray-500);margin-top:4px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+
+/* Charts Grid */
+.charts-grid{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px}
+.chart-card{background:var(--surface);border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,.04);animation:fadeIn .6s ease both}
+.chart-title{font-size:15px;font-weight:700;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}
+.chart-subtitle{font-size:11px;color:var(--gray-500);font-weight:400}
+
+/* Revenue Bars */
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:200px;padding-top:20px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
+.bar{width:100%;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--green),rgba(34,197,94,.3));transition:height 1.2s ease;position:relative;min-height:4px}
+.bar:hover{background:linear-gradient(180deg,var(--green-light),var(--green))}
+.bar-val{font-size:10px;color:var(--gray-400);font-weight:600}
+.bar-label{font-size:10px;color:var(--gray-500);font-weight:500}
+
+/* Pie Chart */
+.pie-wrapper{display:flex;align-items:center;gap:28px}
+.pie{width:180px;height:180px;border-radius:50%;background:conic-gradient(var(--green) 0% 38%,#3b82f6 38% 58%,#f59e0b 58% 74%,#ef4444 74% 86%,#8b5cf6 86% 100%);position:relative;flex-shrink:0}
+.pie::after{content:'';position:absolute;inset:30px;background:var(--surface);border-radius:50%}
+.pie-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1}
+.pie-center-val{font-size:22px;font-weight:800}
+.pie-center-label{font-size:10px;color:var(--gray-500)}
+.pie-legend{display:flex;flex-direction:column;gap:10px}
+.legend-item{display:flex;align-items:center;gap:10px;font-size:13px}
+.legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.legend-label{color:var(--text-dim);flex:1}
+.legend-val{font-weight:700;font-size:13px}
+
+/* Bottom Grid */
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* Top Selling */
+.top-item{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.top-item:last-child{border-bottom:none}
+.top-rank{width:28px;height:28px;border-radius:8px;background:rgba(34,197,94,.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--green);flex-shrink:0}
+.top-info{flex:1}
+.top-name{font-size:14px;font-weight:600}
+.top-cat{font-size:11px;color:var(--gray-500);margin-top:1px}
+.top-qty{font-size:13px;font-weight:700;color:var(--green)}
+.top-revenue{font-size:12px;color:var(--gray-400);text-align:right}
+.top-bar-bg{height:3px;background:rgba(255,255,255,.06);border-radius:4px;margin-top:6px}
+.top-bar-fill{height:100%;border-radius:4px;background:var(--green);transition:width 1s ease}
+
+/* Heatmap */
+.heatmap{display:grid;grid-template-columns:60px repeat(7,1fr);gap:4px;font-size:11px}
+.hm-header{color:var(--gray-500);font-weight:600;text-align:center;padding:4px 0;font-size:10px}
+.hm-row-label{color:var(--gray-500);font-weight:500;display:flex;align-items:center;font-size:10px}
+.hm-cell{aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:10px;transition:transform .2s;cursor:default}
+.hm-cell:hover{transform:scale(1.15)}
+.hm-0{background:rgba(34,197,94,.05);color:var(--gray-600)}
+.hm-1{background:rgba(34,197,94,.12);color:var(--green)}
+.hm-2{background:rgba(34,197,94,.25);color:var(--green)}
+.hm-3{background:rgba(34,197,94,.45);color:var(--green-light)}
+.hm-4{background:rgba(34,197,94,.7);color:#000}
+.hm-5{background:var(--green);color:#000}
+
+/* Monthly Comparison */
+.month-row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.month-row:last-child{border-bottom:none}
+.month-name{width:40px;font-size:13px;font-weight:600;color:var(--gray-400)}
+.month-bars{flex:1;display:flex;flex-direction:column;gap:4px}
+.month-bar-row{display:flex;align-items:center;gap:8px}
+.month-bar-label{font-size:10px;color:var(--gray-500);width:55px}
+.month-bar-track{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
+.month-bar-fill{height:100%;border-radius:4px;transition:width 1s ease}
+.month-bar-fill.this{background:var(--green)}
+.month-bar-fill.last{background:rgba(255,255,255,.15)}
+.month-val{font-size:12px;font-weight:700;width:65px;text-align:right}
+
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1)}
+
+/* Responsive */
+@media(max-width:1200px){.charts-grid{grid-template-columns:1fr}.bottom-grid{grid-template-columns:1fr}}
+@media(max-width:900px){.sidebar{display:none}.kpi-row{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.kpi-row{grid-template-columns:1fr}.top-bar{flex-direction:column;gap:16px;align-items:flex-start}}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="sidebar-logo">Cafe<span>Boost</span></div>
+  <div class="nav-section">
+    <div class="nav-label">Main</div>
+    <div class="nav-item"><span class="icon">📊</span> Dashboard</div>
+    <div class="nav-item active"><span class="icon">📈</span> Analytics</div>
+    <div class="nav-item"><span class="icon">📋</span> Orders</div>
+    <div class="nav-item"><span class="icon">🍽️</span> Menu</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Manage</div>
+    <div class="nav-item"><span class="icon">👥</span> Staff</div>
+    <div class="nav-item"><span class="icon">📦</span> Inventory</div>
+    <div class="nav-item"><span class="icon">🏷️</span> Promotions</div>
+    <div class="nav-item"><span class="icon">⚙️</span> Settings</div>
+  </div>
+  <div class="nav-spacer"></div>
+  <div class="sidebar-footer">
+    <div class="user-row">
+      <div class="user-avatar">RK</div>
+      <div>
+        <div class="user-name">Rohan Kapoor</div>
+        <div class="user-role">Admin</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main -->
+<div class="main">
+  <div class="top-bar">
+    <div>
+      <div class="page-title">Analytics Dashboard</div>
+      <div style="font-size:13px;color:var(--gray-500);margin-top:4px">Real-time insights for CafeBoost, Andheri West</div>
+    </div>
+    <div class="period-tabs">
+      <button class="period-tab">Today</button>
+      <button class="period-tab active">This Week</button>
+      <button class="period-tab">This Month</button>
+      <button class="period-tab">Quarter</button>
+      <button class="period-tab">Year</button>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-header">
+        <div class="kpi-icon">💰</div>
+        <div class="kpi-change up">↑ 18.2%</div>
+      </div>
+      <div class="kpi-value">₹2,84,520</div>
+      <div class="kpi-label">Total Revenue</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-header">
+        <div class="kpi-icon">🧾</div>
+        <div class="kpi-change up">↑ 12.5%</div>
+      </div>
+      <div class="kpi-value">1,247</div>
+      <div class="kpi-label">Total Orders</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-header">
+        <div class="kpi-icon">👤</div>
+        <div class="kpi-change up">↑ 8.3%</div>
+      </div>
+      <div class="kpi-value">₹228</div>
+      <div class="kpi-label">Avg Order Value</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-header">
+        <div class="kpi-icon">⭐</div>
+        <div class="kpi-change down">↓ 0.2%</div>
+      </div>
+      <div class="kpi-value">4.7</div>
+      <div class="kpi-label">Customer Rating</div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-grid">
+    <!-- Revenue Bar Chart -->
+    <div class="chart-card">
+      <div class="chart-title">
+        <span>Revenue by Day</span>
+        <span class="chart-subtitle">This Week (₹ in thousands)</span>
+      </div>
+      <div class="bar-chart">
+        <div class="bar-col"><div class="bar-val">32k</div><div class="bar" style="height:64%"></div><div class="bar-label">Mon</div></div>
+        <div class="bar-col"><div class="bar-val">45k</div><div class="bar" style="height:90%"></div><div class="bar-label">Tue</div></div>
+        <div class="bar-col"><div class="bar-val">28k</div><div class="bar" style="height:56%"></div><div class="bar-label">Wed</div></div>
+        <div class="bar-col"><div class="bar-val">50k</div><div class="bar" style="height:100%"></div><div class="bar-label">Thu</div></div>
+        <div class="bar-col"><div class="bar-val">41k</div><div class="bar" style="height:82%"></div><div class="bar-label">Fri</div></div>
+        <div class="bar-col"><div class="bar-val">48k</div><div class="bar" style="height:96%"></div><div class="bar-label">Sat</div></div>
+        <div class="bar-col"><div class="bar-val">38k</div><div class="bar" style="height:76%"></div><div class="bar-label">Sun</div></div>
+      </div>
+    </div>
+
+    <!-- Pie Chart -->
+    <div class="chart-card">
+      <div class="chart-title">
+        <span>Revenue by Category</span>
+        <span class="chart-subtitle">This Month</span>
+      </div>
+      <div class="pie-wrapper">
+        <div class="pie">
+          <div class="pie-center">
+            <div class="pie-center-val">₹2.8L</div>
+            <div class="pie-center-label">Total</div>
+          </div>
+        </div>
+        <div class="pie-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#22C55E"></div><span class="legend-label">Coffee & Tea</span><span class="legend-val">38%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div><span class="legend-label">Food</span><span class="legend-val">20%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div><span class="legend-label">Snacks</span><span class="legend-val">16%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div><span class="legend-label">Desserts</span><span class="legend-val">12%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div><span class="legend-label">Beverages</span><span class="legend-val">14%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Grid -->
+  <div class="bottom-grid">
+    <!-- Top Selling Items -->
+    <div class="chart-card">
+      <div class="chart-title">
+        <span>Top Selling Items</span>
+        <span class="chart-subtitle">This Month</span>
+      </div>
+      <div class="top-item">
+        <div class="top-rank">1</div>
+        <div class="top-info"><div class="top-name">Cappuccino</div><div class="top-cat">Coffee</div><div class="top-bar-bg"><div class="top-bar-fill" style="width:100%"></div></div></div>
+        <div style="text-align:right"><div class="top-qty">842 sold</div><div class="top-revenue">₹1,55,770</div></div>
+      </div>
+      <div class="top-item">
+        <div class="top-rank">2</div>
+        <div class="top-info"><div class="top-name">Masala Chai</div><div class="top-cat">Tea</div><div class="top-bar-bg"><div class="top-bar-fill" style="width:82%"></div></div></div>
+        <div style="text-align:right"><div class="top-qty">690 sold</div><div class="top-revenue">₹65,550</div></div>
+      </div>
+      <div class="top-item">
+        <div class="top-rank">3</div>
+        <div class="top-info"><div class="top-name">Paneer Tikka Sandwich</div><div class="top-cat">Food</div><div class="top-bar-bg"><div class="top-bar-fill" style="width:68%"></div></div></div>
+        <div style="text-align:right"><div class="top-qty">572 sold</div><div class="top-revenue">₹1,43,000</div></div>
+      </div>
+      <div class="top-item">
+        <div class="top-rank">4</div>
+        <div class="top-info"><div class="top-name">Belgian Chocolate Cake</div><div class="top-cat">Dessert</div><div class="top-bar-bg"><div class="top-bar-fill" style="width:55%"></div></div></div>
+        <div style="text-align:right"><div class="top-qty">461 sold</div><div class="top-revenue">₹1,26,775</div></div>
+      </div>
+      <div class="top-item">
+        <div class="top-rank">5</div>
+        <div class="top-info"><div class="top-name">Cold Brew Coffee</div><div class="top-cat">Coffee</div><div class="top-bar-bg"><div class="top-bar-fill" style="width:45%"></div></div></div>
+        <div style="text-align:right"><div class="top-qty">378 sold</div><div class="top-revenue">₹75,600</div></div>
+      </div>
+    </div>
+
+    <!-- Peak Hours Heatmap -->
+    <div class="chart-card">
+      <div class="chart-title">
+        <span>Peak Hours Heatmap</span>
+        <span class="chart-subtitle">Orders per hour</span>
+      </div>
+      <div class="heatmap">
+        <div></div>
+        <div class="hm-header">Mon</div><div class="hm-header">Tue</div><div class="hm-header">Wed</div><div class="hm-header">Thu</div><div class="hm-header">Fri</div><div class="hm-header">Sat</div><div class="hm-header">Sun</div>
+
+        <div class="hm-row-label">9 AM</div>
+        <div class="hm-cell hm-1">12</div><div class="hm-cell hm-2">28</div><div class="hm-cell hm-1">15</div><div class="hm-cell hm-2">24</div><div class="hm-cell hm-1">18</div><div class="hm-cell hm-3">42</div><div class="hm-cell hm-2">30</div>
+
+        <div class="hm-row-label">11 AM</div>
+        <div class="hm-cell hm-2">35</div><div class="hm-cell hm-3">48</div><div class="hm-cell hm-2">32</div><div class="hm-cell hm-3">45</div><div class="hm-cell hm-3">50</div><div class="hm-cell hm-4">68</div><div class="hm-cell hm-3">52</div>
+
+        <div class="hm-row-label">1 PM</div>
+        <div class="hm-cell hm-4">62</div><div class="hm-cell hm-5">85</div><div class="hm-cell hm-4">58</div><div class="hm-cell hm-5">78</div><div class="hm-cell hm-4">72</div><div class="hm-cell hm-5">92</div><div class="hm-cell hm-4">65</div>
+
+        <div class="hm-row-label">3 PM</div>
+        <div class="hm-cell hm-3">48</div><div class="hm-cell hm-4">62</div><div class="hm-cell hm-3">44</div><div class="hm-cell hm-4">55</div><div class="hm-cell hm-4">60</div><div class="hm-cell hm-4">72</div><div class="hm-cell hm-3">48</div>
+
+        <div class="hm-row-label">5 PM</div>
+        <div class="hm-cell hm-3">40</div><div class="hm-cell hm-3">52</div><div class="hm-cell hm-2">36</div><div class="hm-cell hm-3">48</div><div class="hm-cell hm-4">65</div><div class="hm-cell hm-5">88</div><div class="hm-cell hm-4">58</div>
+
+        <div class="hm-row-label">7 PM</div>
+        <div class="hm-cell hm-2">28</div><div class="hm-cell hm-3">42</div><div class="hm-cell hm-2">25</div><div class="hm-cell hm-3">38</div><div class="hm-cell hm-4">58</div><div class="hm-cell hm-4">70</div><div class="hm-cell hm-3">45</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Monthly Comparison -->
+  <div class="chart-card" style="margin-top:16px">
+    <div class="chart-title">
+      <span>Monthly Comparison</span>
+      <span class="chart-subtitle">This Month vs Last Month</span>
+    </div>
+    <div class="month-row">
+      <div class="month-name">May</div>
+      <div class="month-bars">
+        <div class="month-bar-row"><div class="month-bar-label" style="color:var(--green)">This</div><div class="month-bar-track"><div class="month-bar-fill this" style="width:85%"></div></div><div class="month-val" style="color:var(--green)">₹2,84,520</div></div>
+        <div class="month-bar-row"><div class="month-bar-label">Last</div><div class="month-bar-track"><div class="month-bar-fill last" style="width:72%"></div></div><div class="month-val">₹2,40,800</div></div>
+      </div>
+    </div>
+    <div class="month-row">
+      <div class="month-name">Apr</div>
+      <div class="month-bars">
+        <div class="month-bar-row"><div class="month-bar-label" style="color:var(--green)">This</div><div class="month-bar-track"><div class="month-bar-fill this" style="width:72%"></div></div><div class="month-val" style="color:var(--green)">₹2,40,800</div></div>
+        <div class="month-bar-row"><div class="month-bar-label">Last</div><div class="month-bar-track"><div class="month-bar-fill last" style="width:65%"></div></div><div class="month-val">₹2,18,400</div></div>
+      </div>
+    </div>
+    <div class="month-row">
+      <div class="month-name">Mar</div>
+      <div class="month-bars">
+        <div class="month-bar-row"><div class="month-bar-label" style="color:var(--green)">This</div><div class="month-bar-track"><div class="month-bar-fill this" style="width:65%"></div></div><div class="month-val" style="color:var(--green)">₹2,18,400</div></div>
+        <div class="month-bar-row"><div class="month-bar-label">Last</div><div class="month-bar-track"><div class="month-bar-fill last" style="width:58%"></div></div><div class="month-val">₹1,95,200</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CafeBoost — Increase Repeat Customers for Your Cafe</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#0d0d0d;
+  --charcoal:#1a1a1a;
+  --gold:#c9a84c;
+  --gold-light:#e8d48b;
+  --ivory:#f5f0e8;
+  --gold-gradient:linear-gradient(135deg,#c9a84c,#e8d48b,#c9a84c);
+  --gold-gradient-text:linear-gradient(135deg,#e8d48b,#c9a84c,#e8d48b);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Outfit',sans-serif;
+  background:var(--black);
+  color:var(--ivory);
+  overflow-x:hidden;
+  line-height:1.7;
+}
+h1,h2,h3,h4,h5{font-family:'Cormorant',serif;font-weight:600;line-height:1.2}
+a{text-decoration:none;color:inherit}
+
+/* ── NAV ── */
+.navbar{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  background:rgba(13,13,13,.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(201,168,76,.15);
+  padding:0 2rem;
+  display:flex;align-items:center;justify-content:space-between;
+  height:72px;
+  transition:background .4s;
+}
+.nav-logo{
+  font-family:'Cormorant',serif;font-size:1.6rem;font-weight:700;
+  background:var(--gold-gradient-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  letter-spacing:1px;
+}
+.nav-logo span{color:var(--gold-light)}
+.nav-links{display:flex;gap:2rem;align-items:center}
+.nav-links a{
+  font-size:.95rem;font-weight:400;color:rgba(245,240,232,.7);
+  transition:color .3s;position:relative;
+}
+.nav-links a::after{
+  content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;
+  background:var(--gold);transition:width .3s;
+}
+.nav-links a:hover{color:var(--gold-light)}
+.nav-links a:hover::after{width:100%}
+.nav-cta{
+  padding:.55rem 1.5rem;border-radius:4px;
+  background:var(--gold-gradient);color:var(--black);
+  font-weight:600;font-size:.9rem;
+  transition:transform .3s,box-shadow .3s;
+}
+.nav-cta:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(201,168,76,.35)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px}
+.hamburger span{width:24px;height:2px;background:var(--gold);transition:.3s}
+
+/* ── HERO ── */
+.hero{
+  position:relative;min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  text-align:center;
+  padding:8rem 2rem 6rem;
+  overflow:hidden;
+  background:radial-gradient(ellipse at 50% 30%,rgba(201,168,76,.06) 0%,var(--black) 70%);
+}
+.hero::before{
+  content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+  background:radial-gradient(circle at 20% 50%,rgba(201,168,76,.04),transparent 50%),
+             radial-gradient(circle at 80% 20%,rgba(232,212,139,.03),transparent 40%);
+  pointer-events:none;
+}
+/* Gold particles */
+.particles{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden}
+.particle{
+  position:absolute;
+  width:3px;height:3px;
+  background:var(--gold);
+  border-radius:50%;
+  opacity:0;
+  animation:float-up linear infinite;
+}
+@keyframes float-up{
+  0%{opacity:0;transform:translateY(100vh) scale(0)}
+  10%{opacity:.8}
+  90%{opacity:.6}
+  100%{opacity:0;transform:translateY(-10vh) scale(1)}
+}
+.particle:nth-child(1){left:5%;animation-duration:8s;animation-delay:0s;width:2px;height:2px}
+.particle:nth-child(2){left:15%;animation-duration:12s;animation-delay:1s}
+.particle:nth-child(3){left:25%;animation-duration:9s;animation-delay:3s;width:4px;height:4px}
+.particle:nth-child(4){left:35%;animation-duration:11s;animation-delay:2s}
+.particle:nth-child(5){left:50%;animation-duration:10s;animation-delay:4s;width:2px;height:2px}
+.particle:nth-child(6){left:60%;animation-duration:13s;animation-delay:1.5s}
+.particle:nth-child(7){left:72%;animation-duration:8.5s;animation-delay:3.5s;width:4px;height:4px}
+.particle:nth-child(8){left:82%;animation-duration:11.5s;animation-delay:0.5s}
+.particle:nth-child(9){left:90%;animation-duration:9.5s;animation-delay:2.5s;width:2px;height:2px}
+.particle:nth-child(10){left:45%;animation-duration:14s;animation-delay:5s}
+.particle:nth-child(11){left:8%;animation-duration:10.5s;animation-delay:6s;width:3px;height:3px}
+.particle:nth-child(12){left:68%;animation-duration:7.5s;animation-delay:1.2s;width:2px;height:2px}
+.particle:nth-child(13){left:30%;animation-duration:15s;animation-delay:4.5s}
+.particle:nth-child(14){left:55%;animation-duration:8s;animation-delay:2.8s;width:4px;height:4px}
+.particle:nth-child(15){left:78%;animation-duration:12.5s;animation-delay:0.8s;width:2px;height:2px}
+.particle:nth-child(16){left:95%;animation-duration:9s;animation-delay:3.2s}
+.particle:nth-child(17){left:20%;animation-duration:11s;animation-delay:5.5s;width:3px;height:3px}
+.particle:nth-child(18){left:40%;animation-duration:13.5s;animation-delay:1.8s}
+.particle:nth-child(19){left:10%;animation-duration:10s;animation-delay:7s;width:2px;height:2px}
+.particle:nth-child(20){left:85%;animation-duration:8.8s;animation-delay:4.2s}
+.hero-content{position:relative;z-index:2;max-width:800px}
+.hero-badge{
+  display:inline-block;padding:.45rem 1.2rem;
+  border:1px solid rgba(201,168,76,.4);
+  border-radius:50px;font-size:.8rem;font-weight:500;
+  color:var(--gold-light);letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:1.5rem;
+  background:rgba(201,168,76,.08);
+}
+.hero h1{
+  font-size:clamp(2.5rem,6vw,4.5rem);
+  margin-bottom:1.5rem;
+  background:linear-gradient(135deg,#e8d48b 0%,#c9a84c 30%,#e8d48b 60%,#c9a84c 100%);
+  background-size:200% 200%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:gold-shift 4s ease-in-out infinite;
+}
+@keyframes gold-shift{
+  0%,100%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+}
+.hero p{
+  font-size:1.2rem;color:rgba(245,240,232,.65);
+  max-width:600px;margin:0 auto 2.5rem;
+  font-weight:300;
+}
+.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.btn-primary{
+  padding:.85rem 2.5rem;border-radius:4px;
+  background:var(--gold-gradient);
+  color:var(--black);font-weight:600;font-size:1rem;
+  font-family:'Outfit',sans-serif;
+  border:none;cursor:pointer;
+  position:relative;overflow:hidden;
+  transition:transform .3s,box-shadow .3s;
+}
+.btn-primary::before{
+  content:'';position:absolute;top:0;left:-100%;
+  width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);
+  animation:shimmer 3s ease-in-out infinite;
+}
+@keyframes shimmer{
+  0%{left:-100%}
+  50%,100%{left:100%}
+}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(201,168,76,.4)}
+.btn-secondary{
+  padding:.85rem 2.5rem;border-radius:4px;
+  background:transparent;
+  border:1px solid var(--gold);
+  color:var(--gold-light);font-weight:500;font-size:1rem;
+  font-family:'Outfit',sans-serif;
+  cursor:pointer;transition:all .3s;
+}
+.btn-secondary:hover{background:rgba(201,168,76,.1);transform:translateY(-3px)}
+
+/* ── SECTIONS ── */
+.section{padding:6rem 2rem}
+.section-label{
+  display:inline-block;padding:.35rem 1rem;
+  border:1px solid rgba(201,168,76,.3);border-radius:50px;
+  font-size:.75rem;font-weight:500;color:var(--gold-light);
+  letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:1rem;
+  background:rgba(201,168,76,.06);
+}
+.section-title{
+  font-size:clamp(2rem,4vw,3rem);
+  margin-bottom:.75rem;
+  color:var(--ivory);
+}
+.section-subtitle{
+  font-size:1.05rem;color:rgba(245,240,232,.55);
+  max-width:550px;margin:0 auto 3rem;
+  font-weight:300;
+}
+.section-header{text-align:center;margin-bottom:3.5rem}
+
+/* ── FEATURES ── */
+.features{background:var(--charcoal)}
+.features-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:2rem;
+  max-width:1100px;margin:0 auto;
+}
+.feature-card{
+  background:rgba(13,13,13,.7);
+  border:1px solid rgba(201,168,76,.1);
+  border-radius:8px;
+  padding:2.5rem 2rem;
+  text-align:center;
+  transition:all .4s cubic-bezier(.25,.46,.45,.94);
+  position:relative;
+  overflow:hidden;
+}
+.feature-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  opacity:0;transition:opacity .4s;
+}
+.feature-card:hover{
+  border-color:rgba(201,168,76,.4);
+  transform:translateY(-6px);
+  box-shadow:0 12px 40px rgba(201,168,76,.1);
+}
+.feature-card:hover::before{opacity:1}
+.feature-icon{
+  width:60px;height:60px;
+  margin:0 auto 1.25rem;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.8rem;
+  border:1px solid rgba(201,168,76,.25);
+  border-radius:50%;
+  background:rgba(201,168,76,.06);
+  color:var(--gold-light);
+  transition:all .4s;
+}
+.feature-card:hover .feature-icon{
+  background:rgba(201,168,76,.12);
+  border-color:var(--gold);
+  box-shadow:0 0 20px rgba(201,168,76,.15);
+}
+.feature-card h3{
+  font-size:1.35rem;margin-bottom:.75rem;
+  color:var(--ivory);
+}
+.feature-card p{font-size:.95rem;color:rgba(245,240,232,.55);font-weight:300}
+
+/* ── PRICING ── */
+.pricing{background:var(--black)}
+.pricing-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:2rem;
+  max-width:1100px;margin:0 auto;
+  align-items:start;
+}
+.pricing-card{
+  background:var(--charcoal);
+  border:1px solid rgba(201,168,76,.1);
+  border-radius:10px;
+  padding:2.5rem 2rem;
+  text-align:center;
+  transition:all .4s;
+  position:relative;
+}
+.pricing-card:hover{
+  transform:translateY(-8px);
+  box-shadow:0 16px 48px rgba(201,168,76,.12);
+}
+.pricing-card.popular{
+  border-color:var(--gold);
+  transform:scale(1.05);
+  background:linear-gradient(180deg,rgba(201,168,76,.08),var(--charcoal));
+  box-shadow:0 0 40px rgba(201,168,76,.1);
+}
+.pricing-card.popular:hover{transform:scale(1.05) translateY(-8px)}
+.popular-badge{
+  position:absolute;top:-14px;left:50%;transform:translateX(-50%);
+  background:var(--gold-gradient);
+  color:var(--black);
+  padding:.35rem 1.5rem;
+  border-radius:50px;
+  font-size:.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  white-space:nowrap;
+  box-shadow:0 4px 16px rgba(201,168,76,.3);
+}
+.popular-badge::before{content:'👑 ';font-size:.85rem}
+.pricing-name{
+  font-family:'Cormorant',serif;font-size:1.5rem;font-weight:600;
+  color:var(--ivory);margin-bottom:.5rem;margin-top:.5rem;
+}
+.pricing-price{
+  font-size:3rem;font-weight:700;
+  background:var(--gold-gradient-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:.25rem;
+}
+.pricing-price span{font-size:1rem;font-weight:400}
+.pricing-period{font-size:.85rem;color:rgba(245,240,232,.4);margin-bottom:1.5rem}
+.pricing-features{list-style:none;text-align:left;margin-bottom:2rem}
+.pricing-features li{
+  padding:.55rem 0;border-bottom:1px solid rgba(201,168,76,.08);
+  font-size:.9rem;color:rgba(245,240,232,.7);
+  display:flex;align-items:center;gap:.6rem;
+}
+.pricing-features li::before{
+  content:'✦';color:var(--gold);font-size:.7rem;
+}
+.pricing-btn{
+  width:100%;padding:.85rem;border-radius:4px;
+  font-weight:600;font-size:.95rem;font-family:'Outfit',sans-serif;
+  cursor:pointer;transition:all .3s;
+  position:relative;overflow:hidden;
+}
+.pricing-btn.primary{
+  background:var(--gold-gradient);color:var(--black);border:none;
+}
+.pricing-btn.primary::before{
+  content:'';position:absolute;top:0;left:-100%;
+  width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);
+  animation:shimmer 3s ease-in-out infinite;
+}
+.pricing-btn.primary:hover{box-shadow:0 6px 24px rgba(201,168,76,.4);transform:translateY(-2px)}
+.pricing-btn.secondary{
+  background:transparent;border:1px solid rgba(201,168,76,.3);
+  color:var(--gold-light);
+}
+.pricing-btn.secondary:hover{border-color:var(--gold);background:rgba(201,168,76,.08)}
+
+/* ── TESTIMONIALS ── */
+.testimonials{background:var(--charcoal)}
+.testimonials-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:2rem;
+  max-width:1100px;margin:0 auto;
+}
+.testimonial-card{
+  background:rgba(13,13,13,.7);
+  border:1px solid rgba(201,168,76,.1);
+  border-radius:10px;
+  padding:2.5rem 2rem;
+  position:relative;
+  transition:all .4s;
+}
+.testimonial-card:hover{
+  border-color:rgba(201,168,76,.3);
+  transform:translateY(-4px);
+  box-shadow:0 10px 30px rgba(201,168,76,.08);
+}
+.quote-mark{
+  font-size:4rem;line-height:1;
+  font-family:'Cormorant',serif;
+  background:var(--gold-gradient-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  position:absolute;top:1rem;left:1.5rem;
+  opacity:.3;
+}
+.testimonial-text{
+  font-size:1rem;color:rgba(245,240,232,.75);
+  font-style:italic;margin-bottom:1.5rem;
+  position:relative;z-index:1;
+  font-weight:300;line-height:1.8;
+}
+.testimonial-author{display:flex;align-items:center;gap:1rem}
+.author-avatar{
+  width:48px;height:48px;border-radius:50%;
+  background:var(--gold-gradient);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;color:var(--black);font-size:1rem;
+  font-family:'Cormorant',serif;
+}
+.author-info .name{font-weight:600;color:var(--ivory);font-size:.95rem}
+.author-info .role{font-size:.8rem;color:rgba(245,240,232,.45)}
+.testimonial-stars{color:var(--gold);font-size:.85rem;margin-bottom:1rem;letter-spacing:2px}
+
+/* ── CTA ── */
+.cta-section{
+  padding:6rem 2rem;text-align:center;
+  background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(13,13,13,1),rgba(201,168,76,.1));
+  position:relative;overflow:hidden;
+}
+.cta-section::before{
+  content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+  background:radial-gradient(circle at 50% 50%,rgba(201,168,76,.08),transparent 60%);
+  pointer-events:none;
+}
+.cta-content{position:relative;z-index:2}
+.cta-section h2{
+  font-size:clamp(2rem,4.5vw,3.2rem);
+  margin-bottom:1rem;
+  background:var(--gold-gradient-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.cta-section p{
+  font-size:1.1rem;color:rgba(245,240,232,.6);
+  max-width:500px;margin:0 auto 2.5rem;font-weight:300;
+}
+.cta-section .btn-primary{
+  padding:1rem 3rem;font-size:1.1rem;
+}
+
+/* ── FOOTER ── */
+.footer{
+  background:var(--black);
+  border-top:1px solid rgba(201,168,76,.1);
+  padding:3rem 2rem;
+  text-align:center;
+}
+.footer-logo{
+  font-family:'Cormorant',serif;font-size:1.4rem;font-weight:700;
+  background:var(--gold-gradient-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:1rem;
+}
+.footer-links{display:flex;gap:2rem;justify-content:center;margin-bottom:1.5rem;flex-wrap:wrap}
+.footer-links a{
+  font-size:.85rem;color:rgba(245,240,232,.5);
+  transition:color .3s;
+}
+.footer-links a:hover{color:var(--gold-light)}
+.footer-copy{font-size:.8rem;color:rgba(245,240,232,.25)}
+
+/* ── SCROLL ANIMATIONS ── */
+.fade-in{
+  opacity:0;
+  transform:translateY(40px);
+  transition:opacity .7s cubic-bezier(.25,.46,.45,.94),transform .7s cubic-bezier(.25,.46,.45,.94);
+}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+.fade-in-delay-1{transition-delay:.1s}
+.fade-in-delay-2{transition-delay:.2s}
+.fade-in-delay-3{transition-delay:.3s}
+.fade-in-delay-4{transition-delay:.4s}
+.fade-in-delay-5{transition-delay:.5s}
+.gold-line{
+  width:60px;height:2px;
+  background:var(--gold-gradient);
+  margin:0 auto 1rem;
+  border-radius:2px;
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){
+  .features-grid,.pricing-grid,.testimonials-grid{grid-template-columns:repeat(2,1fr)}
+  .pricing-card.popular{transform:scale(1)}
+  .pricing-card.popular:hover{transform:translateY(-8px)}
+}
+@media(max-width:768px){
+  .navbar{padding:0 1.25rem;height:64px}
+  .nav-links{
+    display:none;position:absolute;top:64px;left:0;right:0;
+    flex-direction:column;gap:0;
+    background:rgba(13,13,13,.97);
+    border-bottom:1px solid rgba(201,168,76,.15);
+    padding:1rem 0;
+  }
+  .nav-links.open{display:flex}
+  .nav-links a{padding:.75rem 2rem}
+  .nav-cta{margin:.75rem 2rem;text-align:center;display:block}
+  .hamburger{display:flex}
+  .hero{padding:7rem 1.5rem 4rem}
+  .hero h1{font-size:2.2rem}
+  .hero p{font-size:1rem}
+  .hero-btns{flex-direction:column;align-items:center}
+  .btn-primary,.btn-secondary{width:100%;max-width:300px;text-align:center}
+  .section{padding:4rem 1.5rem}
+  .features-grid,.pricing-grid,.testimonials-grid{grid-template-columns:1fr;max-width:500px}
+}
+@media(max-width:480px){
+  .hero h1{font-size:1.8rem}
+  .section-title{font-size:1.7rem}
+  .pricing-price{font-size:2.5rem}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar">
+  <div class="nav-logo">CafeBoost</div>
+  <div class="nav-links" id="navLinks">
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#testimonials">Testimonials</a>
+    <a href="#cta" class="nav-cta">Start Free Trial</a>
+  </div>
+  <div class="hamburger" id="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="particles">
+    <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+    <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+    <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+    <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+    <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+    <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+    <div class="particle"></div><div class="particle"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">✦ Built for Cafe Owners ✦</div>
+    <h1>Increase Repeat Customers for Your Cafe ☕</h1>
+    <p>CafeBoost helps you turn first-time visitors into loyal regulars with smart loyalty programs, automated campaigns, and real-time analytics.</p>
+    <div class="hero-btns">
+      <button class="btn-primary">Start Free Trial</button>
+      <button class="btn-secondary">Watch Demo</button>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section features" id="features">
+  <div class="section-header fade-in">
+    <div class="section-label">Features</div>
+    <h2 class="section-title">Everything Your Cafe Needs</h2>
+    <div class="gold-line"></div>
+    <p class="section-subtitle">Powerful tools designed specifically for cafe owners to boost customer retention and revenue.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card fade-in fade-in-delay-1">
+      <div class="feature-icon">🎯</div>
+      <h3>Smart Loyalty Program</h3>
+      <p>Automated stamp cards and reward points that keep customers coming back for their favourite brew.</p>
+    </div>
+    <div class="feature-card fade-in fade-in-delay-2">
+      <div class="feature-icon">📊</div>
+      <h3>Real-Time Analytics</h3>
+      <p>Track visits, spending patterns, and peak hours with beautiful dashboards built for cafe owners.</p>
+    </div>
+    <div class="feature-card fade-in fade-in-delay-3">
+      <div class="feature-icon">📱</div>
+      <h3>SMS & WhatsApp Campaigns</h3>
+      <p>Send personalized offers and birthday rewards directly to your customers' phones automatically.</p>
+    </div>
+    <div class="feature-card fade-in fade-in-delay-1">
+      <div class="feature-icon">⭐</div>
+      <h3>Google Review Boost</h3>
+      <p>Automatically request reviews from happy customers and manage your online reputation effortlessly.</p>
+    </div>
+    <div class="feature-card fade-in fade-in-delay-2">
+      <div class="feature-icon">🔄</div>
+      <h3>Automated Follow-ups</h3>
+      <p>Win back inactive customers with smart re-engagement campaigns triggered by their behaviour.</p>
+    </div>
+    <div class="feature-card fade-in fade-in-delay-3">
+      <div class="feature-icon">💳</div>
+      <h3>Seamless POS Integration</h3>
+      <p>Works with your existing billing software — no hardware changes needed. Setup in under 5 minutes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section pricing" id="pricing">
+  <div class="section-header fade-in">
+    <div class="section-label">Pricing</div>
+    <h2 class="section-title">Simple, Transparent Pricing</h2>
+    <div class="gold-line"></div>
+    <p class="section-subtitle">Choose the plan that fits your cafe. Upgrade or downgrade anytime.</p>
+  </div>
+  <div class="pricing-grid">
+    <div class="pricing-card fade-in fade-in-delay-1">
+      <div class="pricing-name">Starter</div>
+      <div class="pricing-price"><span>₹</span>999</div>
+      <div class="pricing-period">per month</div>
+      <ul class="pricing-features">
+        <li>Up to 500 customers</li>
+        <li>Loyalty program</li>
+        <li>Basic analytics</li>
+        <li>Email support</li>
+        <li>1 POS integration</li>
+      </ul>
+      <button class="pricing-btn secondary">Get Started</button>
+    </div>
+    <div class="pricing-card popular fade-in fade-in-delay-2">
+      <div class="popular-badge">Most Popular</div>
+      <div class="pricing-name">Growth</div>
+      <div class="pricing-price"><span>₹</span>2,499</div>
+      <div class="pricing-period">per month</div>
+      <ul class="pricing-features">
+        <li>Up to 2,000 customers</li>
+        <li>Advanced loyalty tiers</li>
+        <li>SMS & WhatsApp campaigns</li>
+        <li>Google Review automation</li>
+        <li>Priority support</li>
+        <li>3 POS integrations</li>
+      </ul>
+      <button class="pricing-btn primary">Get Started</button>
+    </div>
+    <div class="pricing-card fade-in fade-in-delay-3">
+      <div class="pricing-name">Enterprise</div>
+      <div class="pricing-price"><span>₹</span>4,999</div>
+      <div class="pricing-period">per month</div>
+      <ul class="pricing-features">
+        <li>Unlimited customers</li>
+        <li>Multi-location support</li>
+        <li>Custom campaigns</li>
+        <li>Dedicated account manager</li>
+        <li>API access</li>
+        <li>Unlimited POS integrations</li>
+      </ul>
+      <button class="pricing-btn secondary">Contact Sales</button>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section testimonials" id="testimonials">
+  <div class="section-header fade-in">
+    <div class="section-label">Testimonials</div>
+    <h2 class="section-title">Loved by Cafe Owners</h2>
+    <div class="gold-line"></div>
+    <p class="section-subtitle">See what our customers have to say about CafeBoost.</p>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testimonial-card fade-in fade-in-delay-1">
+      <div class="quote-mark">"</div>
+      <div class="testimonial-stars">★ ★ ★ ★ ★</div>
+      <p class="testimonial-text">CafeBoost transformed our small coffee shop. We saw a 40% increase in repeat customers within the first two months. The loyalty program is a game-changer!</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">P</div>
+        <div class="author-info">
+          <div class="name">Priya Sharma</div>
+          <div class="role">Owner, Brew & Bloom Cafe, Mumbai</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card fade-in fade-in-delay-2">
+      <div class="quote-mark">"</div>
+      <div class="testimonial-stars">★ ★ ★ ★ ★</div>
+      <p class="testimonial-text">The WhatsApp campaign feature alone paid for our subscription ten times over. Our weekend footfall doubled after just one targeted campaign.</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">R</div>
+        <div class="author-info">
+          <div class="name">Rahul Menon</div>
+          <div class="role">Founder, The Daily Grind, Bangalore</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card fade-in fade-in-delay-3">
+      <div class="quote-mark">"</div>
+      <div class="testimonial-stars">★ ★ ★ ★ ★</div>
+      <p class="testimonial-text">Setup was incredibly easy — we were live in 10 minutes. The analytics help us understand our peak hours and optimize staffing. Highly recommend!</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">A</div>
+        <div class="author-info">
+          <div class="name">Ananya Gupta</div>
+          <div class="role">Manager, Chai & Co., Delhi</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="cta">
+  <div class="cta-content fade-in">
+    <h2>Ready to Boost Your Cafe?</h2>
+    <p>Join 1,200+ cafes already growing with CafeBoost. Start your free 14-day trial today.</p>
+    <button class="btn-primary">Start Free Trial — No Card Required</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-logo">CafeBoost</div>
+  <div class="footer-links">
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#testimonials">Testimonials</a>
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Service</a>
+  </div>
+  <div class="footer-copy">© 2026 CafeBoost. All rights reserved.</div>
+</footer>
+
+<script>
+// Intersection Observer for fade-in animations
+const observer=new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+},{threshold:0.1,rootMargin:'0px 0px -50px 0px'});
+
+document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
+
+// Navbar scroll effect
+let lastScroll=0;
+window.addEventListener('scroll',()=>{
+  const nav=document.querySelector('.navbar');
+  if(window.scrollY>50){
+    nav.style.background='rgba(13,13,13,.95)';
+    nav.style.boxShadow='0 2px 20px rgba(0,0,0,.3)';
+  }else{
+    nav.style.background='rgba(13,13,13,.85)';
+    nav.style.boxShadow='none';
+  }
+});
+
+// Close mobile menu on link click
+document.querySelectorAll('.nav-links a').forEach(a=>{
+  a.addEventListener('click',()=>{
+    document.getElementById('navLinks').classList.remove('open');
+  });
+});
+</script>
+</body>
+</html>

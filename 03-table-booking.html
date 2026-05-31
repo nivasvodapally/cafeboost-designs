@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CafeBoost — Table Booking</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: #D8F3DC; color: #1B4332; min-height: 100vh; }
+
+/* NAV */
+nav { background: #1B4332; padding: 16px 32px; display: flex; justify-content: space-between; align-items: center; }
+.logo { font-family: 'Playfair Display', serif; font-size: 24px; color: #95D5B2; font-weight: 700; }
+.logo span { color: #fff; }
+.nav-sub { color: rgba(255,255,255,0.5); font-size: 14px; }
+
+/* LAYOUT */
+.layout { max-width: 1100px; margin: 0 auto; padding: 32px 24px; display: grid; grid-template-columns: 1fr 380px; gap: 32px; }
+@media (max-width: 800px) { .layout { grid-template-columns: 1fr; } }
+
+/* FLOOR PLAN */
+.floor-plan { background: #fff; border-radius: 24px; padding: 32px; box-shadow: 0 4px 30px rgba(27,67,50,0.08); }
+.floor-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+.floor-header h2 { font-family: 'Playfair Display', serif; font-size: 24px; color: #1B4332; }
+.legend { display: flex; gap: 16px; font-size: 12px; color: rgba(27,67,50,0.6); }
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+.legend-dot.avail { background: #40916C; }
+.legend-dot.booked { background: #ccc; }
+.legend-dot.selected { background: #D4A843; box-shadow: 0 0 8px rgba(212,168,67,0.6); }
+
+/* TABLES */
+.tables-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+.table-unit { aspect-ratio: 1; border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; font-weight: 700; border: 3px solid transparent; position: relative; }
+.table-unit .table-icon { font-size: 32px; margin-bottom: 6px; }
+.table-unit .table-label { font-size: 13px; }
+.table-unit .table-seats { font-size: 11px; font-weight: 500; opacity: 0.7; }
+.table-unit.available { background: linear-gradient(145deg, #D8F3DC, #B7E4C7); color: #1B4332; border-color: rgba(64,145,108,0.3); }
+.table-unit.available:hover { transform: scale(1.05); border-color: #40916C; box-shadow: 0 8px 30px rgba(64,145,108,0.2); }
+.table-unit.booked { background: #E8E8E8; color: #999; cursor: not-allowed; }
+.table-unit.selected { background: linear-gradient(145deg, #D4A843, #E0BC5E); color: #1B4332; border-color: #D4A843; box-shadow: 0 0 20px rgba(212,168,67,0.4), 0 8px 30px rgba(212,168,67,0.2); transform: scale(1.05); animation: glow 2s ease-in-out infinite; }
+@keyframes glow { 0%,100%{box-shadow:0 0 20px rgba(212,168,67,0.4)} 50%{box-shadow:0 0 35px rgba(212,168,67,0.6)} }
+.table-unit.booked::after { content: 'Booked'; position: absolute; bottom: 6px; font-size: 9px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+
+/* BOOKING FORM */
+.booking-form { background: #fff; border-radius: 24px; padding: 32px; box-shadow: 0 4px 30px rgba(27,67,50,0.08); position: sticky; top: 24px; }
+.booking-form h2 { font-family: 'Playfair Display', serif; font-size: 24px; margin-bottom: 8px; }
+.booking-form .sub { font-size: 14px; color: rgba(27,67,50,0.5); margin-bottom: 28px; }
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-size: 13px; font-weight: 600; color: #2D6A4F; margin-bottom: 8px; letter-spacing: 0.5px; text-transform: uppercase; }
+.form-group input, .form-group select, .form-group textarea { width: 100%; padding: 14px 16px; border: 2px solid rgba(27,67,50,0.1); border-radius: 14px; font-size: 15px; font-family: 'Inter', sans-serif; color: #1B4332; background: #F0FFF4; transition: border-color 0.3s; outline: none; }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #40916C; }
+.form-group textarea { resize: vertical; min-height: 80px; }
+
+/* TIME SLOTS */
+.time-slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.time-slot { padding: 10px 6px; text-align: center; border: 2px solid rgba(27,67,50,0.1); border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s; background: #F0FFF4; color: #2D6A4F; }
+.time-slot:hover { border-color: #40916C; }
+.time-slot.active { background: #2D6A4F; color: #fff; border-color: #2D6A4F; }
+.time-slot.unavailable { opacity: 0.3; cursor: not-allowed; }
+
+/* SELECTED TABLE INFO */
+.selected-info { background: linear-gradient(135deg, #D8F3DC, #B7E4C7); border-radius: 14px; padding: 16px; margin-bottom: 20px; display: none; align-items: center; gap: 12px; }
+.selected-info.show { display: flex; }
+.selected-info .icon { font-size: 28px; }
+.selected-info .text { font-weight: 600; font-size: 15px; }
+.selected-info .sub-text { font-size: 12px; color: rgba(27,67,50,0.6); }
+
+/* CONFIRM */
+.confirm-btn { width: 100%; padding: 18px; background: linear-gradient(135deg, #2D6A4F, #40916C); color: #fff; border: none; border-radius: 16px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.3s; font-family: 'Inter', sans-serif; letter-spacing: 0.5px; }
+.confirm-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(45,106,79,0.4); }
+.confirm-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* TOAST */
+.toast { position: fixed; top: 24px; right: 24px; background: #1B4332; color: #fff; padding: 16px 28px; border-radius: 16px; font-size: 15px; font-weight: 600; z-index: 200; transform: translateY(-120%); transition: transform 0.4s cubic-bezier(0.22,1,0.36,1); box-shadow: 0 8px 30px rgba(27,67,50,0.3); border-left: 4px solid #95D5B2; }
+.toast.show { transform: translateY(0); }
+
+/* MODAL */
+.modal-overlay { position: fixed; inset: 0; background: rgba(27,67,50,0.6); backdrop-filter: blur(8px); z-index: 300; display: none; align-items: center; justify-content: center; }
+.modal-overlay.show { display: flex; }
+.modal { background: #fff; border-radius: 24px; padding: 48px; text-align: center; max-width: 400px; animation: modalIn 0.4s ease; }
+@keyframes modalIn { from{opacity:0;transform:scale(0.9)} to{opacity:1;transform:scale(1)} }
+.modal .check { font-size: 64px; margin-bottom: 16px; display: block; }
+.modal h3 { font-family: 'Playfair Display', serif; font-size: 28px; margin-bottom: 10px; color: #1B4332; }
+.modal p { color: rgba(27,67,50,0.6); font-size: 15px; line-height: 1.6; margin-bottom: 28px; }
+.modal-btn { background: #2D6A4F; color: #fff; border: none; padding: 14px 40px; border-radius: 50px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.3s; }
+.modal-btn:hover { background: #1B4332; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Cafe<span>Boost</span></div>
+  <div class="nav-sub">Table Booking</div>
+</nav>
+
+<div class="layout">
+  <div class="floor-plan">
+    <div class="floor-header">
+      <h2>🪑 Floor Plan</h2>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot avail"></div> Available</div>
+        <div class="legend-item"><div class="legend-dot booked"></div> Booked</div>
+        <div class="legend-item"><div class="legend-dot selected"></div> Selected</div>
+      </div>
+    </div>
+    <div class="tables-grid" id="tablesGrid"></div>
+  </div>
+
+  <div class="booking-form">
+    <h2>Book a Table</h2>
+    <p class="sub">Select a table and fill in your details</p>
+
+    <div class="selected-info" id="selectedInfo">
+      <div class="icon">🪑</div>
+      <div><div class="text" id="selectedTableText">Table 5</div><div class="sub-text">4 seats • Window side</div></div>
+    </div>
+
+    <div class="form-group">
+      <label>Date</label>
+      <input type="date" id="bookDate">
+    </div>
+    <div class="form-group">
+      <label>Time Slot</label>
+      <div class="time-slots" id="timeSlots"></div>
+    </div>
+    <div class="form-group">
+      <label>Guests</label>
+      <select id="guests">
+        <option>1 Guest</option><option>2 Guests</option><option selected>3 Guests</option><option>4 Guests</option><option>5 Guests</option><option>6+ Guests</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Special Requests</label>
+      <textarea placeholder="e.g. Birthday celebration, wheelchair access, window seat..."></textarea>
+    </div>
+    <button class="confirm-btn" id="confirmBtn" disabled>Confirm Booking</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <span class="check">✅</span>
+    <h3>Booking Confirmed!</h3>
+    <p id="modalText">Table 5 has been booked. We'll have your table ready!</p>
+    <button class="modal-btn" onclick="document.getElementById('modal').classList.remove('show')">Done</button>
+  </div>
+</div>
+
+<script>
+const tables = [
+  {id:1,seats:2,status:'available',spot:'Near entrance'},{id:2,seats:2,status:'booked',spot:'Near entrance'},
+  {id:3,seats:4,status:'available',spot:'Window side'},{id:4,seats:4,status:'booked',spot:'Window side'},
+  {id:5,seats:4,status:'available',spot:'Center'},{id:6,seats:6,status:'available',spot:'Center'},
+  {id:7,seats:2,status:'available',spot:'Bar counter'},{id:8,seats:2,status:'booked',spot:'Bar counter'},
+  {id:9,seats:6,status:'available',spot:'Private corner'},{id:10,seats:4,status:'available',spot:'Garden view'},
+  {id:11,seats:8,status:'available',spot:'Private room'},{id:12,seats:2,status:'booked',spot:'Balcony'},
+];
+
+let selectedTable = null;
+
+function renderTables() {
+  const grid = document.getElementById('tablesGrid');
+  grid.innerHTML = tables.map(t => `
+    <div class="table-unit ${t.status}" data-id="${t.id}" onclick="selectTable(${t.id})">
+      <span class="table-icon">${t.seats <= 2 ? '🪑' : t.seats <= 4 ? '🛋️' : '🏛️'}</span>
+      <span class="table-label">Table ${t.id}</span>
+      <span class="table-seats">${t.seats} seats</span>
+    </div>
+  `).join('');
+}
+
+function selectTable(id) {
+  const t = tables.find(x => x.id === id);
+  if (t.status === 'booked') return;
+  if (selectedTable === id) {
+    selectedTable = null;
+    t.status = 'available';
+    document.getElementById('selectedInfo').classList.remove('show');
+  } else {
+    if (selectedTable) tables.find(x => x.id === selectedTable).status = 'available';
+    selectedTable = id;
+    t.status = 'selected';
+    document.getElementById('selectedInfo').classList.add('show');
+    document.getElementById('selectedTableText').textContent = `Table ${t.id} — ${t.spot}`;
+    document.querySelector('#selectedInfo .sub-text').textContent = `${t.seats} seats • ${t.spot}`;
+  }
+  renderTables();
+  updateConfirm();
+}
+
+// Time slots
+const slots = ['9 AM','10 AM','11 AM','12 PM','1 PM','2 PM','3 PM','4 PM','5 PM','6 PM','7 PM','8 PM','9 PM'];
+let selectedSlot = null;
+const tsContainer = document.getElementById('timeSlots');
+slots.forEach((s, i) => {
+  const div = document.createElement('div');
+  div.className = 'time-slot' + (i === 3 || i === 7 ? ' unavailable' : '');
+  div.textContent = s;
+  if (i !== 3 && i !== 7) {
+    div.onclick = () => {
+      document.querySelectorAll('.time-slot').forEach(x => x.classList.remove('active'));
+      div.classList.add('active');
+      selectedSlot = s;
+      updateConfirm();
+    };
+  }
+  tsContainer.appendChild(div);
+});
+
+// Set today's date
+document.getElementById('bookDate').valueAsDate = new Date();
+
+function updateConfirm() {
+  document.getElementById('confirmBtn').disabled = !(selectedTable && selectedSlot);
+}
+
+document.getElementById('confirmBtn').addEventListener('click', () => {
+  const t = tables.find(x => x.id === selectedTable);
+  document.getElementById('modalText').textContent = `Table ${t.id} (${t.spot}) has been booked for ${selectedSlot}. We'll have your table ready!`;
+  document.getElementById('modal').classList.add('show');
+  showToast(`🎉 Table ${t.id} booked for ${selectedSlot}!`);
+});
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+renderTables();
+</script>
+</body>
+</html>

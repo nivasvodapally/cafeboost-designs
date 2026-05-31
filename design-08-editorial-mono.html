@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CafeBoost — Editorial</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --black: #000000;
+  --white: #ffffff;
+  --red: #e63946;
+  --off-white: #f5f5f0;
+  --gray: #666;
+  --light-gray: #e0e0e0;
+  --font-display: 'Fraunces', serif;
+  --font-body: 'IBM Plex Sans', sans-serif;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  color: var(--black);
+  background: var(--off-white);
+  line-height: 1.6;
+  overflow-x: hidden;
+  position: relative;
+}
+/* Paper texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-60px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal-left.visible { opacity: 1; transform: translateX(0); }
+.reveal-right {
+  opacity: 0;
+  transform: translateX(60px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal-right.visible { opacity: 1; transform: translateX(0); }
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal-scale.visible { opacity: 1; transform: scale(1); }
+
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+/* ─── NAV ─── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: rgba(245,245,240,0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--black);
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 1.5rem; font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.nav-logo span { color: var(--red); }
+.nav-links { display: flex; gap: 32px; list-style: none; }
+.nav-links a {
+  font-size: 0.85rem; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--red); }
+.nav-cta {
+  font-size: 0.8rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  padding: 10px 24px;
+  border: 2px solid var(--black);
+  transition: all 0.3s;
+}
+.nav-cta:hover {
+  background: var(--black);
+  color: var(--white);
+}
+.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; }
+.hamburger span { display: block; width: 24px; height: 2px; background: var(--black); transition: all 0.3s; }
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center;
+  padding-top: 64px;
+  position: relative;
+}
+.hero-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  width: 100%;
+}
+.hero-text { padding: 40px 0; }
+.hero-issue {
+  font-size: 0.75rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.2em;
+  color: var(--red);
+  margin-bottom: 24px;
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 7vw, 7rem);
+  font-weight: 900;
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  margin-bottom: 32px;
+}
+.hero h1 em {
+  font-style: italic;
+  color: var(--red);
+  font-weight: 400;
+}
+.hero-line {
+  width: 80px; height: 2px;
+  background: var(--red);
+  margin-bottom: 32px;
+}
+.hero-desc {
+  font-size: 1.1rem; line-height: 1.7;
+  color: var(--gray);
+  max-width: 480px;
+  margin-bottom: 40px;
+}
+.hero-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.btn-primary {
+  display: inline-block;
+  background: var(--red); color: var(--white);
+  font-family: var(--font-body);
+  font-size: 0.85rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  padding: 16px 40px;
+  border: 2px solid var(--red);
+  transition: all 0.3s;
+}
+.btn-primary:hover { background: var(--black); border-color: var(--black); }
+.btn-ghost {
+  font-size: 0.85rem; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  padding: 16px 32px;
+  border: 2px solid var(--black);
+  transition: all 0.3s;
+}
+.btn-ghost:hover { background: var(--black); color: var(--white); }
+.hero-visual {
+  position: relative;
+  height: 70vh;
+  display: flex; align-items: center; justify-content: center;
+}
+.hero-img-placeholder {
+  width: 100%; height: 100%;
+  background: linear-gradient(145deg, #1a1a1a 0%, #333 40%, #1a1a1a 100%);
+  position: relative;
+  overflow: hidden;
+}
+.hero-img-placeholder::after {
+  content: 'EDITORIAL';
+  position: absolute;
+  font-family: var(--font-display);
+  font-size: 8rem; font-weight: 900;
+  color: rgba(255,255,255,0.04);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) rotate(-8deg);
+  white-space: nowrap;
+}
+.hero-volume {
+  position: absolute;
+  bottom: -20px; right: -20px;
+  font-family: var(--font-display);
+  font-size: 10rem; font-weight: 900;
+  line-height: 1;
+  color: rgba(0,0,0,0.04);
+  pointer-events: none;
+}
+
+/* ─── SECTION HEADERS ─── */
+.section-label {
+  font-size: 0.7rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.25em;
+  color: var(--red);
+  margin-bottom: 16px;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+.section-title em { font-style: italic; font-weight: 400; }
+.section-divider {
+  width: 60px; height: 2px;
+  background: var(--red);
+  margin-bottom: 20px;
+}
+.section-subtitle {
+  font-size: 1.05rem; color: var(--gray);
+  max-width: 560px; line-height: 1.7;
+}
+
+/* ─── FEATURES ─── */
+.features { padding: 120px 0; }
+.features-header { text-align: center; margin-bottom: 80px; }
+.features-header .section-subtitle { margin: 0 auto; }
+.feature-block {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 480px;
+  margin-bottom: 0;
+  overflow: hidden;
+}
+.feature-block:nth-child(even) .feature-visual { order: -1; }
+.feature-visual {
+  position: relative;
+  overflow: hidden;
+}
+.feature-img {
+  width: 100%; height: 100%;
+  min-height: 480px;
+}
+.feature-img-1 { background: linear-gradient(135deg, #0a0a0a, #2a2a2a); }
+.feature-img-2 { background: linear-gradient(135deg, #f0f0ec, #d8d8d0); }
+.feature-img-3 { background: linear-gradient(135deg, #1a1a1a, #3d3d3d); }
+.feature-img-4 { background: linear-gradient(135deg, #e8e8e4, #c8c8c0); }
+.feature-img-5 { background: linear-gradient(135deg, #0d0d0d, #2f2f2f); }
+.feature-img-6 { background: linear-gradient(135deg, #eeece8, #d0cec8); }
+.feature-img span {
+  position: absolute;
+  font-family: var(--font-display);
+  font-size: 6rem; font-weight: 900;
+  color: rgba(255,255,255,0.06);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+.feature-img-2 span, .feature-img-4 span, .feature-img-6 span {
+  color: rgba(0,0,0,0.06);
+}
+.feature-content {
+  display: flex; flex-direction: column;
+  justify-content: center;
+  padding: 60px 80px;
+}
+.feature-num {
+  font-family: var(--font-display);
+  font-size: 5rem; font-weight: 900;
+  line-height: 1;
+  color: rgba(0,0,0,0.06);
+  margin-bottom: 16px;
+}
+.feature-content h3 {
+  font-family: var(--font-display);
+  font-size: 2rem; font-weight: 800;
+  margin-bottom: 16px; line-height: 1.2;
+}
+.feature-content h3 em { font-style: italic; font-weight: 400; color: var(--red); }
+.feature-content p {
+  font-size: 1rem; color: var(--gray);
+  line-height: 1.8; max-width: 420px;
+}
+.feature-red-line {
+  width: 40px; height: 2px;
+  background: var(--red);
+  margin: 16px 0;
+}
+
+/* ─── PRICING ─── */
+.pricing {
+  padding: 120px 0;
+  background: var(--white);
+}
+.pricing-header { text-align: center; margin-bottom: 80px; }
+.pricing-header .section-subtitle { margin: 0 auto; }
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+}
+.price-card {
+  border: 1px solid var(--light-gray);
+  padding: 60px 40px;
+  text-align: center;
+  position: relative;
+  transition: all 0.4s;
+  background: var(--white);
+}
+.price-card:hover { transform: translateY(-4px); }
+.price-card.featured {
+  border: 2px solid var(--red);
+  background: var(--black);
+  color: var(--white);
+  transform: scale(1.04);
+  z-index: 2;
+}
+.price-card.featured:hover { transform: scale(1.04) translateY(-4px); }
+.price-card.featured .price-amount,
+.price-card.featured .price-period { color: var(--white); }
+.price-card.featured .price-desc { color: rgba(255,255,255,0.6); }
+.price-card.featured .price-features li { color: rgba(255,255,255,0.8); border-bottom-color: rgba(255,255,255,0.1); }
+.price-card.featured .price-features li::before { color: var(--red); }
+.price-card.featured .price-btn {
+  background: var(--red); color: var(--white);
+  border-color: var(--red);
+}
+.price-card.featured .price-btn:hover { background: #c62d39; }
+.price-tag {
+  font-size: 0.7rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.2em;
+  color: var(--red);
+  margin-bottom: 24px;
+}
+.price-card.featured .price-tag { color: var(--red); }
+.price-name {
+  font-family: var(--font-display);
+  font-size: 1.8rem; font-weight: 800;
+  margin-bottom: 8px;
+}
+.price-amount {
+  font-family: var(--font-display);
+  font-size: 3.5rem; font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 4px;
+  color: var(--black);
+}
+.price-period {
+  font-size: 0.85rem; color: var(--gray);
+  margin-bottom: 24px;
+}
+.price-desc {
+  font-size: 0.9rem; color: var(--gray);
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+.price-features {
+  list-style: none;
+  margin-bottom: 40px;
+  text-align: left;
+}
+.price-features li {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--light-gray);
+  font-size: 0.9rem;
+  display: flex; align-items: center; gap: 12px;
+}
+.price-features li::before {
+  content: '—';
+  color: var(--red);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.price-btn {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 0.8rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  padding: 14px 36px;
+  border: 2px solid var(--black);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.price-btn:hover { background: var(--black); color: var(--white); }
+.featured-badge {
+  position: absolute;
+  top: 0; right: 0;
+  background: var(--red);
+  color: var(--white);
+  font-size: 0.65rem; font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  padding: 8px 20px;
+}
+
+/* ─── TESTIMONIALS ─── */
+.testimonials { padding: 120px 0; }
+.testimonials-header { text-align: center; margin-bottom: 80px; }
+.testimonials-header .section-subtitle { margin: 0 auto; }
+.testimonial-grid { display: flex; flex-direction: column; gap: 80px; }
+.testimonial-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 40px;
+  align-items: start;
+  max-width: 900px;
+}
+.testimonial-card:nth-child(even) { margin-left: auto; }
+.testimonial-quote-mark {
+  font-family: var(--font-display);
+  font-size: 10rem; font-weight: 900;
+  line-height: 0.7;
+  color: var(--red);
+  opacity: 0.2;
+  flex-shrink: 0;
+  user-select: none;
+}
+.testimonial-text {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 400;
+  line-height: 1.4;
+  font-style: italic;
+  margin-bottom: 24px;
+}
+.testimonial-divider {
+  width: 40px; height: 2px;
+  background: var(--black);
+  margin-bottom: 16px;
+}
+.testimonial-author {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.testimonial-role {
+  font-size: 0.85rem;
+  color: var(--gray);
+  margin-top: 2px;
+}
+
+/* ─── CTA ─── */
+.cta {
+  padding: 140px 0;
+  background: var(--black);
+  color: var(--white);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.cta::before {
+  content: 'BOOST';
+  position: absolute;
+  font-family: var(--font-display);
+  font-size: 20rem; font-weight: 900;
+  color: rgba(255,255,255,0.02);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.cta .section-label { color: var(--red); }
+.cta .section-title { color: var(--white); }
+.cta .section-title em { color: var(--red); }
+.cta .section-divider { margin: 0 auto 32px; }
+.cta-desc {
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.6);
+  max-width: 540px;
+  margin: 0 auto 48px;
+  line-height: 1.7;
+}
+.cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.btn-white {
+  display: inline-block;
+  background: var(--white); color: var(--black);
+  font-family: var(--font-body);
+  font-size: 0.85rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  padding: 16px 48px;
+  border: 2px solid var(--white);
+  transition: all 0.3s;
+}
+.btn-white:hover { background: var(--red); border-color: var(--red); color: var(--white); }
+.btn-outline-white {
+  font-family: var(--font-body);
+  font-size: 0.85rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  padding: 16px 40px;
+  border: 2px solid rgba(255,255,255,0.3);
+  color: var(--white);
+  transition: all 0.3s;
+}
+.btn-outline-white:hover { border-color: var(--white); background: rgba(255,255,255,0.08); }
+
+/* ─── FOOTER ─── */
+footer {
+  padding: 60px 0;
+  border-top: 1px solid var(--black);
+}
+.footer-inner {
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 24px;
+}
+.footer-logo {
+  font-family: var(--font-display);
+  font-size: 1.3rem; font-weight: 800;
+}
+.footer-logo span { color: var(--red); }
+.footer-links { display: flex; gap: 32px; list-style: none; }
+.footer-links a {
+  font-size: 0.8rem; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--red); }
+.footer-copy {
+  font-size: 0.8rem; color: var(--gray);
+  width: 100%; text-align: center;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--light-gray);
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 1024px) {
+  .hero-content { grid-template-columns: 1fr; gap: 40px; }
+  .hero-visual { height: 50vh; }
+  .hero h1 { font-size: clamp(3rem, 8vw, 5rem); }
+  .feature-block { grid-template-columns: 1fr; }
+  .feature-block:nth-child(even) .feature-visual { order: 0; }
+  .feature-content { padding: 40px 24px; }
+  .feature-img { min-height: 320px; }
+  .pricing-grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
+  .price-card.featured { transform: none; }
+  .price-card.featured:hover { transform: translateY(-4px); }
+}
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .nav-cta { display: none; }
+  .hamburger { display: flex; }
+  .hero h1 { font-size: clamp(2.5rem, 10vw, 4rem); }
+  .hero-visual { height: 40vh; }
+  .feature-content { padding: 32px 20px; }
+  .feature-num { font-size: 3rem; }
+  .testimonial-card {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .testimonial-quote-mark { font-size: 6rem; line-height: 0.8; margin-bottom: -10px; }
+  .testimonial-card:nth-child(even) { margin-left: 0; }
+  .price-card { padding: 40px 24px; }
+  .price-amount { font-size: 2.8rem; }
+  .cta { padding: 100px 0; }
+  .cta::before { font-size: 10rem; }
+  .footer-inner { flex-direction: column; text-align: center; }
+  .footer-links { flex-wrap: wrap; justify-content: center; }
+  .section-title { font-size: clamp(2rem, 6vw, 3rem); }
+}
+
+/* Mobile nav overlay */
+.mobile-nav {
+  display: none;
+  position: fixed; inset: 0;
+  background: var(--off-white);
+  z-index: 999;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+}
+.mobile-nav.open { display: flex; }
+.mobile-nav a {
+  font-family: var(--font-display);
+  font-size: 2rem; font-weight: 700;
+}
+.mobile-nav-close {
+  position: absolute; top: 20px; right: 24px;
+  background: none; border: none;
+  font-size: 2rem; cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">Cafe<span>Boost</span></a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#testimonials">Stories</a></li>
+      <li><a href="#cta">Contact</a></li>
+    </ul>
+    <a href="#cta" class="nav-cta">Get Started</a>
+    <button class="hamburger" onclick="document.querySelector('.mobile-nav').classList.toggle('open')" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="mobile-nav">
+  <button class="mobile-nav-close" onclick="this.parentElement.classList.remove('open')">&times;</button>
+  <a href="#features" onclick="this.parentElement.classList.remove('open')">Features</a>
+  <a href="#pricing" onclick="this.parentElement.classList.remove('open')">Pricing</a>
+  <a href="#testimonials" onclick="this.parentElement.classList.remove('open')">Stories</a>
+  <a href="#cta" onclick="this.parentElement.classList.remove('open')">Contact</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-text reveal">
+        <div class="hero-issue">Issue No. 01 — Café Intelligence</div>
+        <h1>The future of<br><em>café</em><br>management</h1>
+        <div class="hero-line"></div>
+        <p class="hero-desc">An editorial-grade platform designed for the modern café owner. Elegant tools, powerful analytics, seamless operations.</p>
+        <div class="hero-actions">
+          <a href="#cta" class="btn-primary">Start Free Trial</a>
+          <a href="#features" class="btn-ghost">Read More</a>
+        </div>
+      </div>
+      <div class="hero-visual reveal-scale">
+        <div class="hero-img-placeholder"></div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-volume">01</div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="features-header container reveal">
+    <div class="section-label">Features — Inside the Machine</div>
+    <h2 class="section-title">Everything your<br><em>café needs</em></h2>
+    <div class="section-divider" style="margin: 0 auto 20px;"></div>
+    <p class="section-subtitle">Six essential tools, crafted with editorial precision. Each feature is designed to elevate your café's operations.</p>
+  </div>
+
+  <div class="feature-block reveal-left">
+    <div class="feature-visual">
+      <div class="feature-img feature-img-1"><span>01</span></div>
+    </div>
+    <div class="feature-content">
+      <div class="feature-num">01</div>
+      <h3>Smart <em>Billing</em></h3>
+      <div class="feature-red-line"></div>
+      <p>Lightning-fast POS with split bills, custom charges, and instant GST-compliant invoicing. Every transaction, beautifully documented.</p>
+    </div>
+  </div>
+
+  <div class="feature-block reveal-right">
+    <div class="feature-visual">
+      <div class="feature-img feature-img-2"><span>02</span></div>
+    </div>
+    <div class="feature-content">
+      <div class="feature-num">02</div>
+      <h3>Menu <em>Control</em></h3>
+      <div class="feature-red-line"></div>
+      <p>Dynamic menu management with real-time pricing, seasonal specials, and category-wise organization. Update in seconds, everywhere.</p>
+    </div>
+  </div>
+
+  <div class="feature-block reveal-left">
+    <div class="feature-visual">
+      <div class="feature-img feature-img-3"><span>03</span></div>
+    </div>
+    <div class="feature-content">
+      <div class="feature-num">03</div>
+      <h3>Inventory <em>Insight</em></h3>
+      <div class="feature-red-line"></div>
+      <p>Track every gram of coffee bean. Auto-reorder alerts, waste analytics, and supplier management — precision in every detail.</p>
+    </div>
+  </div>
+
+  <div class="feature-block reveal-right">
+    <div class="feature-visual">
+      <div class="feature-img feature-img-4"><span>04</span></div>
+    </div>
+    <div class="feature-content">
+      <div class="feature-num">04</div>
+      <h3>Staff <em>Scheduling</em></h3>
+      <div class="feature-red-line"></div>
+      <p>Effortless shift planning, attendance tracking, and payroll integration. Your team, perfectly orchestrated.</p>
+    </div>
+  </div>
+
+  <div class="feature-block reveal-left">
+    <div class="feature-visual">
+      <div class="feature-img feature-img-5"><span>05</span></div>
+    </div>
+    <div class="feature-content">
+      <div class="feature-num">05</div>
+      <h3>Customer <em>Loyalty</em></h3>
+      <div class="feature-red-line"></div>
+      <p>Points, rewards, and personalized offers. Build a community of regulars who keep coming back for more.</p>
+    </div>
+  </div>
+
+  <div class="feature-block reveal-right">
+    <div class="feature-visual">
+      <div class="feature-img feature-img-6"><span>06</span></div>
+    </div>
+    <div class="feature-content">
+      <div class="feature-num">06</div>
+      <h3>Live <em>Analytics</em></h3>
+      <div class="feature-red-line"></div>
+      <p>Revenue dashboards, peak hour insights, and trend forecasting. Data that tells the story of your café's success.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="pricing-header container reveal">
+    <div class="section-label">Pricing — Choose Your Edition</div>
+    <h2 class="section-title">Plans that<br><em>scale with you</em></h2>
+    <div class="section-divider" style="margin: 0 auto 20px;"></div>
+    <p class="section-subtitle">Simple, transparent pricing. No hidden chapters.</p>
+  </div>
+  <div class="container">
+    <div class="pricing-grid">
+      <div class="price-card reveal">
+        <div class="price-tag">Starter</div>
+        <div class="price-name">Essentials</div>
+        <div class="price-amount">₹999</div>
+        <div class="price-period">per month</div>
+        <p class="price-desc">For single-location cafés getting started with digital operations.</p>
+        <ul class="price-features">
+          <li>1 Outlet</li>
+          <li>Smart Billing & POS</li>
+          <li>Basic Menu Control</li>
+          <li>Inventory Tracking</li>
+          <li>Email Support</li>
+        </ul>
+        <button class="price-btn">Choose Plan</button>
+      </div>
+
+      <div class="price-card featured reveal-scale">
+        <div class="featured-badge">Most Popular</div>
+        <div class="price-tag">Growth</div>
+        <div class="price-name">Professional</div>
+        <div class="price-amount">₹2,499</div>
+        <div class="price-period">per month</div>
+        <p class="price-desc">For growing cafés that need advanced tools and deeper insights.</p>
+        <ul class="price-features">
+          <li>Up to 3 Outlets</li>
+          <li>Everything in Essentials</li>
+          <li>Staff Scheduling</li>
+          <li>Customer Loyalty Program</li>
+          <li>Live Analytics Dashboard</li>
+          <li>Priority Support</li>
+        </ul>
+        <button class="price-btn">Choose Plan</button>
+      </div>
+
+      <div class="price-card reveal">
+        <div class="price-tag">Enterprise</div>
+        <div class="price-name">Chain</div>
+        <div class="price-amount">₹4,999</div>
+        <div class="price-period">per month</div>
+        <p class="price-desc">For multi-location chains and franchises with complex needs.</p>
+        <ul class="price-features">
+          <li>Unlimited Outlets</li>
+          <li>Everything in Professional</li>
+          <li>Custom Integrations</li>
+          <li>Advanced Forecasting</li>
+          <li>Dedicated Account Manager</li>
+          <li>White-label Options</li>
+        </ul>
+        <button class="price-btn">Choose Plan</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="testimonials">
+  <div class="testimonials-header container reveal">
+    <div class="section-label">Testimonials — From the Field</div>
+    <h2 class="section-title">Stories from<br><em>fellow owners</em></h2>
+    <div class="section-divider" style="margin: 0 auto 20px;"></div>
+    <p class="section-subtitle">Real voices. Real results. The CaféBoost difference, told by those who live it.</p>
+  </div>
+  <div class="container">
+    <div class="testimonial-grid">
+      <div class="testimonial-card reveal-left">
+        <div class="testimonial-quote-mark">"</div>
+        <div>
+          <p class="testimonial-text">CafeBoost transformed our morning rush. Billing is instant, inventory alerts save us from stockouts, and the analytics? They changed how we plan our entire week.</p>
+          <div class="testimonial-divider"></div>
+          <div class="testimonial-author">Priya Sharma</div>
+          <div class="testimonial-role">Owner, Bloom Café — Mumbai</div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal-right">
+        <div class="testimonial-quote-mark">"</div>
+        <div>
+          <p class="testimonial-text">We scaled from 1 to 4 locations with CafeBoost. The multi-outlet dashboard gives me a bird's-eye view of everything. It's like having a command center for my business.</p>
+          <div class="testimonial-divider"></div>
+          <div class="testimonial-author">Arjun Mehta</div>
+          <div class="testimonial-role">Founder, Bean & Beyond — Bengaluru</div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal-left">
+        <div class="testimonial-quote-mark">"</div>
+        <div>
+          <p class="testimonial-text">The loyalty program alone paid for the subscription in the first month. Our repeat customer rate jumped 40%. Simple, elegant, powerful — exactly what a café needs.</p>
+          <div class="testimonial-divider"></div>
+          <div class="testimonial-author">Kavitha Nair</div>
+          <div class="testimonial-role">Manager, Roast Republic — Chennai</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="cta">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">The Final Page</div>
+      <h2 class="section-title">Ready to <em>rewrite</em><br>your café story?</h2>
+      <div class="section-divider"></div>
+      <p class="cta-desc">Join thousands of café owners who chose elegance over complexity. Start your free trial — no credit card, no commitments.</p>
+      <div class="cta-buttons">
+        <a href="#" class="btn-white">Start Free Trial</a>
+        <a href="#" class="btn-outline-white">Book a Demo</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-logo">Cafe<span>Boost</span></div>
+      <ul class="footer-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#testimonials">Stories</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">Terms</a></li>
+      </ul>
+      <p class="footer-copy">&copy; 2026 CafeBoost. Crafted with editorial precision.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Scroll-triggered reveal
+const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      // Stagger within sibling groups
+      const siblings = entry.target.parentElement.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+      let delay = 0;
+      siblings.forEach((s, j) => { if (s === entry.target) delay = j * 80; });
+      setTimeout(() => entry.target.classList.add('visible'), delay);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+reveals.forEach(el => observer.observe(el));
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CafeBoost — Increase Repeat Customers for Your Cafe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;line-height:1.6;overflow-x:hidden}
+h1,h2,h3,h4,h5,h6{font-family:'Plus Jakarta Sans',sans-serif}
+a{text-decoration:none;color:inherit}
+
+/* Gradient Text */
+.grad-text{background:linear-gradient(135deg,#8b5cf6,#3b82f6,#14b8a6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:300% 300%;animation:gradShift 6s ease infinite}
+@keyframes gradShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+
+/* Aurora Blobs */
+.blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.5;mix-blend-mode:screen;pointer-events:none}
+.blob-1{width:500px;height:500px;background:radial-gradient(circle,#8b5cf6,transparent 70%);animation:blobMove1 12s ease-in-out infinite}
+.blob-2{width:450px;height:450px;background:radial-gradient(circle,#3b82f6,transparent 70%);animation:blobMove2 15s ease-in-out infinite}
+.blob-3{width:400px;height:400px;background:radial-gradient(circle,#14b8a6,transparent 70%);animation:blobMove3 18s ease-in-out infinite}
+.blob-4{width:350px;height:350px;background:radial-gradient(circle,#ec4899,transparent 70%);animation:blobMove4 14s ease-in-out infinite}
+@keyframes blobMove1{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(100px,-80px) scale(1.1)}50%{transform:translate(-50px,100px) scale(.9)}75%{transform:translate(80px,50px) scale(1.05)}}
+@keyframes blobMove2{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(-120px,60px) scale(1.15)}50%{transform:translate(80px,-90px) scale(.95)}75%{transform:translate(-60px,-40px) scale(1.1)}}
+@keyframes blobMove3{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(60px,120px) scale(.9)}50%{transform:translate(-100px,-50px) scale(1.1)}75%{transform:translate(90px,-80px) scale(1)}}
+@keyframes blobMove4{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(-80px,-100px) scale(1.05)}50%{transform:translate(120px,70px) scale(.95)}75%{transform:translate(-40px,90px) scale(1.1)}}
+
+/* Glass Effect */
+.glass{background:rgba(255,255,255,.05);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.1);border-radius:16px}
+
+/* Container */
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+
+/* Navigation */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 0;transition:background .3s}
+nav.scrolled{background:rgba(15,23,42,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.06)}
+nav .container{display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.5rem}
+.nav-logo span{background:linear-gradient(135deg,#8b5cf6,#14b8a6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;gap:32px;align-items:center;list-style:none}
+.nav-links a{color:#94a3b8;font-size:.9rem;font-weight:500;transition:color .3s}
+.nav-links a:hover{color:#fff}
+.nav-cta{display:flex;gap:12px;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 28px;border-radius:12px;font-weight:600;font-size:.9rem;cursor:pointer;border:none;transition:all .3s}
+.btn-ghost{background:transparent;color:#e2e8f0;border:1px solid rgba(255,255,255,.15)}
+.btn-ghost:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.25)}
+.btn-primary{background:rgba(255,255,255,.12);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);color:#fff;border:1px solid rgba(255,255,255,.2);box-shadow:0 0 30px rgba(139,92,246,.25),inset 0 1px 0 rgba(255,255,255,.15)}
+.btn-primary:hover{background:rgba(255,255,255,.18);box-shadow:0 0 40px rgba(139,92,246,.4),inset 0 1px 0 rgba(255,255,255,.2);transform:translateY(-2px)}
+.btn-lg{padding:16px 40px;font-size:1rem;border-radius:14px}
+.mobile-toggle{display:none;background:none;border:none;color:#e2e8f0;font-size:1.5rem;cursor:pointer}
+
+/* Hero */
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:120px 0 80px}
+.hero .blob-1{top:-100px;left:-100px}
+.hero .blob-2{top:20%;right:-150px}
+.hero .blob-3{bottom:-100px;left:30%}
+.hero .blob-4{top:40%;left:50%}
+.hero-content{position:relative;z-index:2;text-align:center;max-width:720px;margin:0 auto}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;border-radius:100px;font-size:.8rem;font-weight:600;color:#c4b5fd;background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.25);margin-bottom:24px;backdrop-filter:blur(8px)}
+.badge::before{content:"";width:8px;height:8px;border-radius:50%;background:#8b5cf6;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero h1{font-size:clamp(2.5rem,6vw,4rem);font-weight:800;line-height:1.15;margin-bottom:20px}
+.hero p{font-size:1.15rem;color:#94a3b8;margin-bottom:36px;max-width:560px;margin-left:auto;margin-right:auto}
+.hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.hero-stats{display:flex;gap:48px;justify-content:center;margin-top:60px;padding-top:40px;border-top:1px solid rgba(255,255,255,.06)}
+.stat{text-align:center}
+.stat-num{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.8rem;font-weight:800;color:#fff}
+.stat-label{font-size:.8rem;color:#64748b;margin-top:4px}
+
+/* Fade-in */
+.fade-in{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+
+/* Features */
+.features{padding:120px 0;position:relative}
+.section-header{text-align:center;margin-bottom:64px}
+.section-header .badge-sm{display:inline-block;padding:6px 16px;border-radius:100px;font-size:.75rem;font-weight:600;color:#14b8a6;background:rgba(20,184,166,.1);border:1px solid rgba(20,184,166,.2);margin-bottom:16px}
+.section-header h2{font-size:clamp(2rem,4vw,2.75rem);font-weight:800;margin-bottom:16px}
+.section-header p{color:#94a3b8;max-width:520px;margin:0 auto;font-size:1.05rem}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;position:relative;z-index:2}
+.feature-card{padding:36px;border-radius:20px;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s;background:rgba(255,255,255,.03);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.06)}
+.feature-card:hover{transform:translateY(-6px);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.feature-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;border-radius:20px 20px 0 0}
+.feature-card:nth-child(1)::before{background:linear-gradient(90deg,#8b5cf6,#a78bfa)}
+.feature-card:nth-child(2)::before{background:linear-gradient(90deg,#3b82f6,#60a5fa)}
+.feature-card:nth-child(3)::before{background:linear-gradient(90deg,#14b8a6,#2dd4bf)}
+.feature-card:nth-child(4)::before{background:linear-gradient(90deg,#ec4899,#f472b6)}
+.feature-card:nth-child(5)::before{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+.feature-card:nth-child(6)::before{background:linear-gradient(90deg,#06b6d4,#22d3ee)}
+.feature-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}
+.feature-card:nth-child(1) .feature-icon{color:#a78bfa;background:rgba(139,92,246,.1)}
+.feature-card:nth-child(2) .feature-icon{color:#60a5fa;background:rgba(59,130,246,.1)}
+.feature-card:nth-child(3) .feature-icon{color:#2dd4bf;background:rgba(20,184,166,.1)}
+.feature-card:nth-child(4) .feature-icon{color:#f472b6;background:rgba(236,72,153,.1)}
+.feature-card:nth-child(5) .feature-icon{color:#fbbf24;background:rgba(245,158,11,.1)}
+.feature-card:nth-child(6) .feature-icon{color:#22d3ee;background:rgba(6,182,212,.1)}
+.feature-card h3{font-size:1.15rem;font-weight:700;margin-bottom:10px;color:#f1f5f9}
+.feature-card p{font-size:.9rem;color:#94a3b8;line-height:1.7}
+
+/* Pricing */
+.pricing{padding:120px 0;position:relative}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:stretch;position:relative;z-index:2}
+.pricing-card{padding:40px 32px;border-radius:20px;text-align:center;position:relative;background:rgba(15,23,42,.7);backdrop-filter:blur(16px);transition:transform .3s}
+.pricing-card::before{content:"";position:absolute;inset:0;border-radius:20px;padding:1.5px;background:linear-gradient(135deg,rgba(139,92,246,.3),rgba(59,130,246,.3),rgba(20,184,166,.3));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;transition:background .5s}
+.pricing-card:hover::before{background:linear-gradient(135deg,#8b5cf6,#3b82f6,#14b8a6,#ec4899)}
+.pricing-card:hover{transform:translateY(-8px)}
+.pricing-card.featured{background:rgba(139,92,246,.06);transform:scale(1.04)}
+.pricing-card.featured::before{background:linear-gradient(135deg,#8b5cf6,#3b82f6,#14b8a6);padding:2px}
+.pricing-card.featured:hover{transform:scale(1.04) translateY(-8px)}
+.pricing-card.featured .popular-badge{position:absolute;top:-14px;left:50%;transform:translateX(-50%);padding:6px 20px;border-radius:100px;font-size:.75rem;font-weight:700;color:#fff;background:linear-gradient(135deg,#8b5cf6,#3b82f6);white-space:nowrap}
+.plan-name{font-size:1.1rem;font-weight:700;color:#94a3b8;margin-bottom:8px}
+.plan-price{font-family:'Plus Jakarta Sans',sans-serif;font-size:3rem;font-weight:800;color:#fff;margin-bottom:4px}
+.plan-price span{font-size:1rem;font-weight:500;color:#64748b}
+.plan-desc{font-size:.85rem;color:#64748b;margin-bottom:32px}
+.plan-features{list-style:none;text-align:left;margin-bottom:36px}
+.plan-features li{padding:10px 0;font-size:.9rem;color:#cbd5e1;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:center;gap:10px}
+.plan-features li::before{content:"✓";color:#14b8a6;font-weight:700}
+.pricing-card .btn{width:100%}
+
+/* Testimonials */
+.testimonials{padding:120px 0;position:relative}
+.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;position:relative;z-index:2}
+.testimonial-card{padding:32px;border-radius:20px;position:relative;background:rgba(255,255,255,.03);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.06);transition:transform .3s,box-shadow .3s}
+.testimonial-card:hover{transform:translateY(-6px)}
+.testimonial-card:nth-child(1){box-shadow:0 12px 40px rgba(139,92,246,.12)}
+.testimonial-card:nth-child(1):hover{box-shadow:0 20px 60px rgba(139,92,246,.2)}
+.testimonial-card:nth-child(2){box-shadow:0 12px 40px rgba(59,130,246,.12)}
+.testimonial-card:nth-child(2):hover{box-shadow:0 20px 60px rgba(59,130,246,.2)}
+.testimonial-card:nth-child(3){box-shadow:0 12px 40px rgba(20,184,166,.12)}
+.testimonial-card:nth-child(3):hover{box-shadow:0 20px 60px rgba(20,184,166,.2)}
+.stars{color:#fbbf24;font-size:.9rem;margin-bottom:16px;letter-spacing:2px}
+.testimonial-card blockquote{font-size:.95rem;color:#cbd5e1;line-height:1.8;margin-bottom:24px;font-style:italic}
+.test-author{display:flex;align-items:center;gap:14px}
+.test-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;color:#fff}
+.testimonial-card:nth-child(1) .test-avatar{background:linear-gradient(135deg,#8b5cf6,#a78bfa)}
+.testimonial-card:nth-child(2) .test-avatar{background:linear-gradient(135deg,#3b82f6,#60a5fa)}
+.testimonial-card:nth-child(3) .test-avatar{background:linear-gradient(135deg,#14b8a6,#2dd4bf)}
+.test-name{font-weight:700;font-size:.9rem;color:#f1f5f9}
+.test-role{font-size:.8rem;color:#64748b}
+
+/* CTA */
+.cta{padding:120px 0;position:relative}
+.cta-box{position:relative;border-radius:28px;padding:80px 40px;text-align:center;overflow:hidden;background:rgba(255,255,255,.03);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.08)}
+.cta-box .blob-1{width:300px;height:300px;top:-100px;right:-80px;opacity:.35}
+.cta-box .blob-2{width:250px;height:250px;bottom:-80px;left:-60px;opacity:.3}
+.cta-box h2{font-size:clamp(2rem,4vw,2.75rem);font-weight:800;margin-bottom:16px;position:relative;z-index:2}
+.cta-box p{color:#94a3b8;margin-bottom:36px;font-size:1.05rem;position:relative;z-index:2}
+
+/* Footer */
+footer{padding:64px 0 32px;border-top:1px solid rgba(255,255,255,.06)}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
+.footer-brand p{color:#64748b;font-size:.9rem;margin-top:12px;max-width:280px}
+.footer-col h4{font-size:.85rem;font-weight:700;color:#e2e8f0;margin-bottom:16px;text-transform:uppercase;letter-spacing:1px}
+.footer-col ul{list-style:none}
+.footer-col li{margin-bottom:10px}
+.footer-col a{color:#64748b;font-size:.9rem;transition:color .3s}
+.footer-col a:hover{color:#e2e8f0}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:32px;border-top:1px solid rgba(255,255,255,.06);font-size:.8rem;color:#475569}
+
+/* Responsive */
+@media(max-width:1024px){
+  .features-grid,.pricing-grid,.testimonials-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  .nav-links,.nav-cta .btn-ghost{display:none}
+  .mobile-toggle{display:block}
+  .features-grid,.pricing-grid,.testimonials-grid{grid-template-columns:1fr}
+  .pricing-card.featured{transform:scale(1)}
+  .pricing-card.featured:hover{transform:translateY(-8px)}
+  .hero-stats{flex-direction:column;gap:24px}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .footer-bottom{flex-direction:column;gap:12px;text-align:center}
+  .cta-box{padding:48px 24px}
+}
+@media(max-width:480px){
+  .footer-grid{grid-template-columns:1fr}
+  .hero-btns{flex-direction:column;align-items:center}
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-logo"><span>CafeBoost</span></div>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#testimonials">Customers</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="#" class="btn btn-ghost">Sign in</a>
+      <a href="#" class="btn btn-primary">Start Free</a>
+    </div>
+    <button class="mobile-toggle" onclick="document.querySelector('.nav-links').style.display=document.querySelector('.nav-links').style.display==='flex'?'none':'flex'">☰</button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <div class="blob blob-4"></div>
+  <div class="container">
+    <div class="hero-content fade-in">
+      <div class="badge">Built for Independent Cafes</div>
+      <h1>Increase Repeat Customers for Your Cafe <span style="font-size:1em">☕</span></h1>
+      <p>CafeBoost helps independent cafes turn one-time visitors into loyal regulars with smart loyalty rewards, seamless ordering, and powerful customer insights.</p>
+      <div class="hero-btns">
+        <a href="#" class="btn btn-primary btn-lg">Start Free Trial</a>
+        <a href="#features" class="btn btn-ghost btn-lg">See Features</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num grad-text">40%</div><div class="stat-label">More Repeat Visits</div></div>
+        <div class="stat"><div class="stat-num grad-text">2,800+</div><div class="stat-label">Cafes Powered</div></div>
+        <div class="stat"><div class="stat-num grad-text">4.9★</div><div class="stat-label">Average Rating</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="badge-sm">Features</div>
+      <h2 class="grad-text">Everything Your Cafe Needs</h2>
+      <p>Six powerful tools designed to bring customers back, increase orders, and grow your revenue — all from one platform.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🎯</div>
+        <h3>Loyalty Rewards</h3>
+        <p>Points, stamps, and tiered rewards that keep customers coming back. Fully customizable to match your brand.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">📱</div>
+        <h3>QR Ordering</h3>
+        <p>Let customers scan, order, and pay from their table. Reduces wait times and increases average order value by 23%.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">📅</div>
+        <h3>Bookings</h3>
+        <p>Accept reservations and pre-orders online. Manage seating capacity and reduce no-shows with automated reminders.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">👥</div>
+        <h3>CRM</h3>
+        <p>Build rich customer profiles from every visit. Track preferences, visit frequency, and lifetime value automatically.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">📣</div>
+        <h3>Marketing</h3>
+        <p>Automated campaigns via WhatsApp and email. Send birthday offers, new menu alerts, and win-back messages effortlessly.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">📊</div>
+        <h3>Insights</h3>
+        <p>Real-time dashboards showing revenue trends, peak hours, popular items, and customer behaviour at a glance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="badge-sm">Pricing</div>
+      <h2 class="grad-text">Simple, Transparent Pricing</h2>
+      <p>Start free and scale as your cafe grows. No hidden fees, cancel anytime.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card fade-in">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price">₹999<span>/mo</span></div>
+        <div class="plan-desc">Perfect for single-location cafes getting started</div>
+        <ul class="plan-features">
+          <li>Up to 500 customers</li>
+          <li>Loyalty rewards program</li>
+          <li>QR code ordering</li>
+          <li>Basic analytics</li>
+          <li>Email support</li>
+        </ul>
+        <a href="#" class="btn btn-ghost">Get Started</a>
+      </div>
+      <div class="pricing-card featured fade-in">
+        <div class="popular-badge">Most Popular</div>
+        <div class="plan-name">Growth</div>
+        <div class="plan-price">₹2,499<span>/mo</span></div>
+        <div class="plan-desc">For growing cafes that want the full toolkit</div>
+        <ul class="plan-features">
+          <li>Up to 2,000 customers</li>
+          <li>Everything in Starter</li>
+          <li>Table bookings</li>
+          <li>CRM & customer profiles</li>
+          <li>WhatsApp marketing</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="#" class="btn btn-primary">Get Started</a>
+      </div>
+      <div class="pricing-card fade-in">
+        <div class="plan-name">Roastery</div>
+        <div class="plan-price">₹4,999<span>/mo</span></div>
+        <div class="plan-desc">Multi-location chains and premium brands</div>
+        <ul class="plan-features">
+          <li>Unlimited customers</li>
+          <li>Everything in Growth</li>
+          <li>Multi-location management</li>
+          <li>Advanced insights & reports</li>
+          <li>API access</li>
+          <li>Dedicated account manager</li>
+        </ul>
+        <a href="#" class="btn btn-ghost">Get Started</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials" id="testimonials">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="badge-sm">Customers</div>
+      <h2 class="grad-text">Loved by Cafe Owners</h2>
+      <p>Hear from the cafes already growing with CafeBoost.</p>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card fade-in">
+        <div class="stars">★★★★★</div>
+        <blockquote>"CafeBoost transformed our morning rush. Customers love the loyalty rewards and our repeat visits jumped 45% in just two months."</blockquote>
+        <div class="test-author">
+          <div class="test-avatar">PR</div>
+          <div><div class="test-name">Priya Raman</div><div class="test-role">Owner, Brew & Co — Chennai</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card fade-in">
+        <div class="stars">★★★★★</div>
+        <blockquote>"The QR ordering alone saved us from hiring an extra server during weekends. Average order value went up and customers love the speed."</blockquote>
+        <div class="test-author">
+          <div class="test-avatar">AK</div>
+          <div><div class="test-name">Arjun Krishnan</div><div class="test-role">Founder, Third Wave Roastery — Bangalore</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card fade-in">
+        <div class="stars">★★★★★</div>
+        <blockquote>"The WhatsApp marketing feature is a game-changer. We send personalised offers and see 30% redemptions. Best investment we made this year."</blockquote>
+        <div class="test-author">
+          <div class="test-avatar">FS</div>
+          <div><div class="test-name">Fatima Sheikh</div><div class="test-role">Manager, The Coffee Project — Hyderabad</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div class="container">
+    <div class="cta-box fade-in">
+      <div class="blob blob-1"></div>
+      <div class="blob blob-2"></div>
+      <h2 class="grad-text" style="position:relative;z-index:2">Ready to Grow Your Cafe?</h2>
+      <p style="position:relative;z-index:2">Join 2,800+ cafes already using CafeBoost. Start your free trial today — no credit card required.</p>
+      <a href="#" class="btn btn-primary btn-lg" style="position:relative;z-index:2">Start Free Trial</a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="nav-logo"><span>CafeBoost</span></div>
+        <p>The all-in-one platform for independent cafes to increase repeat customers and grow revenue.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#">Features</a></li>
+          <li><a href="#">Pricing</a></li>
+          <li><a href="#">Integrations</a></li>
+          <li><a href="#">API</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Privacy</a></li>
+          <li><a href="#">Terms</a></li>
+          <li><a href="#">Security</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 CafeBoost. All rights reserved.</span>
+      <span>Made with ☕ for cafe owners</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Navbar scroll
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>50);
+});
+
+// Fade-in on scroll
+const observer=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}});
+},{threshold:0.15,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
+
+// Stagger fade-in children
+document.querySelectorAll('.features-grid,.pricing-grid,.testimonials-grid').forEach(grid=>{
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        Array.from(entry.target.children).forEach((child,i)=>{
+          setTimeout(()=>{child.classList.add('visible');},i*100);
+        });
+        obs.unobserve(entry.target);
+      }
+    });
+  },{threshold:0.1});
+  obs.observe(grid);
+  Array.from(grid.children).forEach(c=>{c.classList.remove('visible');});
+});
+</script>
+</body>
+</html>

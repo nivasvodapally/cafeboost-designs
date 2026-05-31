@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CafeBoost — Kitchen Queue</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#1C0A00;--surface:#2A1508;--card:#3A1E0C;--border:rgba(249,115,22,.15);--red:#DC2626;--orange:#F97316;--yellow:#FBBF24;--green:#22C55E;--white:#fef2f2;--text:#FDE68A;--text-dim:#92400e;--text-light:#fed7aa}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-light);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* Top Bar */
+.top-bar{background:var(--surface);border-bottom:2px solid var(--orange);padding:16px 32px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+.top-left{display:flex;align-items:center;gap:20px}
+.logo{font-size:22px;font-weight:800;letter-spacing:-.5px}
+.logo span{color:var(--orange)}
+.live-badge{background:var(--red);color:var(--white);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;animation:pulse 2s infinite;display:flex;align-items:center;gap:6px}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--white);animation:blink 1s infinite}
+.clock{font-size:32px;font-weight:800;color:var(--yellow);font-variant-numeric:tabular-nums;letter-spacing:1px}
+.clock-date{font-size:12px;color:var(--orange);font-weight:500}
+.top-right{display:flex;gap:10px}
+.top-btn{background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.3);color:var(--orange);padding:8px 16px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+.top-btn:hover{background:rgba(249,115,22,.25)}
+.top-btn.active{background:var(--orange);color:var(--bg)}
+
+/* Stats Strip */
+.stats-strip{display:flex;gap:2px;padding:0 32px;margin-top:16px;margin-bottom:16px}
+.stats-strip .s-card{flex:1;background:var(--surface);padding:16px 20px;text-align:center;border:1px solid var(--border)}
+.stats-strip .s-card:first-child{border-radius:12px 0 0 12px}
+.stats-strip .s-card:last-child{border-radius:0 12px 12px 0}
+.s-val{font-size:28px;font-weight:800;letter-spacing:-1px}
+.s-label{font-size:11px;color:var(--orange);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.s-new .s-val{color:var(--yellow)}
+.s-prog .s-val{color:var(--orange)}
+.s-ready .s-val{color:var(--green)}
+.s-avg .s-val{color:var(--text-light)}
+
+/* Kanban */
+.kanban{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;padding:0 32px 32px;min-height:calc(100vh - 200px)}
+.column{display:flex;flex-direction:column;gap:12px}
+.col-header{padding:14px 16px;border-radius:12px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:space-between;letter-spacing:.3px}
+.col-header .count{background:rgba(0,0,0,.3);padding:2px 10px;border-radius:20px;font-size:12px}
+.col-new .col-header{background:linear-gradient(135deg,rgba(251,191,36,.15),rgba(251,191,36,.05));border:1px solid rgba(251,191,36,.3);color:var(--yellow)}
+.col-prog .col-header{background:linear-gradient(135deg,rgba(249,115,22,.15),rgba(249,115,22,.05));border:1px solid rgba(249,115,22,.3);color:var(--orange)}
+.col-ready .col-header{background:linear-gradient(135deg,rgba(34,197,94,.15),rgba(34,197,94,.05));border:1px solid rgba(34,197,94,.3);color:var(--green)}
+
+/* Order Cards */
+.order-card{background:var(--card);border-radius:14px;padding:18px;border-left:4px solid var(--orange);transition:all .3s;animation:slideIn .4s ease both;cursor:pointer}
+.order-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.order-card.priority-high{border-left-color:var(--red);box-shadow:0 0 20px rgba(220,38,38,.1)}
+.order-card.priority-vip{border-left-color:var(--yellow);background:linear-gradient(135deg,var(--card),rgba(251,191,36,.05))}
+
+.order-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.table-num{background:var(--orange);color:var(--bg);font-size:14px;font-weight:800;padding:4px 12px;border-radius:8px;min-width:48px;text-align:center}
+.order-id{font-size:11px;color:var(--orange);font-weight:600;margin-top:4px}
+.priority-tag{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px}
+.priority-tag.high{background:rgba(220,38,38,.2);color:var(--red)}
+.priority-tag.vip{background:rgba(251,191,36,.2);color:var(--yellow)}
+.priority-tag.normal{background:rgba(249,115,22,.15);color:var(--orange)}
+
+.order-items-list{margin-bottom:14px}
+.order-line{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:14px}
+.order-line .qty{background:rgba(249,115,22,.15);color:var(--orange);font-weight:700;padding:2px 8px;border-radius:6px;font-size:12px;margin-right:8px;min-width:28px;text-align:center}
+.order-line .item-name{flex:1;font-weight:500;font-size:13px}
+.order-line .item-note{font-size:11px;color:var(--orange);font-style:italic}
+
+.order-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid var(--border)}
+.time-elapsed{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700}
+.time-icon{font-size:14px}
+.time-green{color:var(--green)}
+.time-yellow{color:var(--yellow)}
+.time-red{color:var(--red);animation:pulse 1.5s infinite}
+
+.order-total{font-size:14px;font-weight:700;color:var(--text-light)}
+
+/* Action Buttons */
+.order-actions{display:flex;gap:6px;margin-top:12px}
+.action-btn{flex:1;padding:10px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;font-family:inherit;text-transform:uppercase;letter-spacing:.5px}
+.action-btn.start{background:var(--orange);color:var(--bg)}
+.action-btn.start:hover{background:#ea580c}
+.action-btn.ready{background:var(--green);color:var(--bg)}
+.action-btn.ready:hover{background:#16a34a}
+.action-btn.done{background:rgba(34,197,94,.2);color:var(--green);border:1px solid rgba(34,197,94,.3)}
+.action-btn.done:hover{background:var(--green);color:var(--bg)}
+.action-btn.cancel{background:rgba(220,38,38,.15);color:var(--red);border:1px solid rgba(220,38,38,.2)}
+.action-btn.cancel:hover{background:var(--red);color:var(--white)}
+
+@keyframes slideIn{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* Responsive */
+@media(max-width:1024px){
+  .kanban{grid-template-columns:1fr}
+  .column{max-height:none}
+  .stats-strip{flex-wrap:wrap}
+  .stats-strip .s-card{flex:1 1 48%;border-radius:8px!important;margin-bottom:2px}
+}
+@media(max-width:640px){
+  .top-bar{padding:12px 16px;flex-wrap:wrap;gap:10px}
+  .kanban{padding:0 16px 16px}
+  .stats-strip{padding:0 16px}
+  .clock{font-size:24px}
+}
+</style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="top-bar">
+  <div class="top-left">
+    <div class="logo">Cafe<span>Boost</span></div>
+    <div class="live-badge"><span class="live-dot"></span> LIVE KITCHEN</div>
+  </div>
+  <div style="text-align:center">
+    <div class="clock" id="clock">12:45:30</div>
+    <div class="clock-date">Wednesday, 27 May 2026</div>
+  </div>
+  <div class="top-right">
+    <button class="top-btn active">All Orders</button>
+    <button class="top-btn">🔥 Urgent Only</button>
+    <button class="top-btn">🔔 Sound On</button>
+  </div>
+</div>
+
+<!-- Stats Strip -->
+<div class="stats-strip">
+  <div class="s-card s-new"><div class="s-val">5</div><div class="s-label">🟡 New Orders</div></div>
+  <div class="s-card s-prog"><div class="s-val">4</div><div class="s-label">🟠 In Progress</div></div>
+  <div class="s-card s-ready"><div class="s-val">3</div><div class="s-label">🟢 Ready</div></div>
+  <div class="s-card s-avg"><div class="s-val">8m</div><div class="s-label">⏱️ Avg Time</div></div>
+</div>
+
+<!-- Kanban Board -->
+<div class="kanban">
+  <!-- NEW Column -->
+  <div class="column col-new">
+    <div class="col-header">🟡 NEW ORDERS <span class="count">5</span></div>
+
+    <div class="order-card priority-high">
+      <div class="order-top">
+        <div><div class="table-num">T-7</div><div class="order-id">#1047</div></div>
+        <span class="priority-tag high">🔥 Rush</span>
+      </div>
+      <div class="order-items-list">
+        <div class="order-line"><span class="qty">2×</span><span class="item-name">Paneer Tikka Masala</span></div>
+        <div class="order-line"><span class="qty">3×</span><span class="item-name">Butter Naan</span></div>
+        <div class="order-line"><span class="qty">1×</span><span class="item-name">Jeera Rice</span></div>
+        <div class="order-line"><span class="qty">2×</span><span class="item-name">Mango Lassi</span></div>
+      </div>
+      <div class="order-bottom">
+        <div class="time-elapsed time-red"><span class="time-icon">⏱</span> 12m ago</div>
+        <div class="order-total">₹845</div>
+      </div>
+      <div class="order-actions">
+        <button class="action-btn start">▶ Start Preparing</button>
+        <button class="action-btn cancel">✕</button>
+      </div>
+    </div>
+
+    <div class="order-card priority-vip">
+      <div class="order-top">
+        <div><div class="table-num">T-3</div><div class="order-id">#1048</div></div>
+        <span class="priority-tag vip">⭐ VIP</span>
+      </div>
+      <div class="order-items-list">
+        <div class="order-line"><span class="qty">1×</span><span class="item-name">Truffle Mushroom Pasta</span><span class="item-note">extra cheese</span></div>
+        <div class="order-line"><span class="qty">1×</span><span class="item-name">Caesar Salad</span></div>
+        <div class="order-line"><span class="qty">2×</span><span class="item-name">Espresso</span></div>
+      </div>
+      <div class="order-bottom">
+        <div class="time-elapsed time-yellow"><span class="time-icon">⏱</span> 7m ago</div>
+        <div class="order-total">₹920</div>
+      </div>
+      <div class="order-actions">
+        <button class="action-btn start">▶ Start Preparing</button>
+        <button class="action-btn cancel">✕</button>
+      </div>
+    </div>
+
+    <div class="order-card">
+      <div class="order-top">
+        <div><div class="table-num">T-12</div><div class="order-id">#1049</div></div>
+        <span class="priority-tag normal">Normal</span>
+      </div>
+      <div class="order-items-list">
+        <div class="order-line"><span class="qty">1×</span><span class="item-name">Masala Dosa</span></div>
+        <div class="order-line"><span class="qty">1×</span><span class="item-name">Filter Coffee</span></div>
+        <div class="order-line"><span class="qty">1×</span><span class="item-name">Medu Vada</span></div>
+      </div>
+      <div class="order-bottom">
+        <div class="time-elapsed time-green"><span class="time-icon">⏱</span> 2m ago</div>
+        <div class="order-total">₹310</div>
+      </div>
+      <div class="order-actions">
+        <button class="action-btn start">▶ Start Preparing</button>
+        <button class="action-btn cancel">✕</button>
+      </div>
+    </div>
+
+    <div class="order-card">
+      <div class="order-top">
+        <div><div class="table-num">T-5</div><div class="order-id">#1050</div></div>
+        <span class="priority-tag normal">Normal</span>
+      </div>
+      <div class="order-items-list">
+        <div class="order-line"><span class="qty">3×</span><span class="item-name">Cappuccino</span><span class="item-note">1 oat milk</span></div>
+        <div class="order-line"><span class="qty">2×</span><span class="item-name">Butter Croissant</span></div>
+      </div>
+      <div class="order-bottom">
+        <div class="time-elapsed time-green"><span class="time-icon">⏱</span> 1m ago</div>
+        <div class="order-total">₹795</div>
+      </div>
+      <div class="order-actions">
+        <button class="action-btn start">▶ Start Preparing</button>
+        <button class="action-btn cancel">✕</button>
+      </div>
+    </div>
+
+    <div class="order-card">
+      <div class="order-top">
+        <div><div class="table-num">TA-2</div><div class="order-id">#1051</div></div>
+        <span class="priority-tag normal">📦 Takeaway</span>
+      </div>
+      <div class="order-items-list">
+        <div class="order-line"><span class="qty">1×</span><span class="item-name">Chicken Tikka Wrap</span></div>
+        <div class="order-line"><span class="qty">1×</span><span class="item-name">Cold Brew</span></div>
+      </div>
+      <div class="order-bottom">
+        <div class="time-elapsed time-green"><span class="time-icon">⏱</span> Just now</div>
+        <div class="order-total">₹345</div>
+      </div>
+      <div class="order-actions">
+        <button class="action-btn start">▶ Start Preparing</button>
+        <button class="action-btn cancel">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- IN PROGRESS Column -->
+  <div class="column col-prog">
+    <div class="col-header">🟠 IN PROGRESS <span class="count">4</span></div>
+
+    <div class="order-card priority-high">
+      <div class="order-top">
+        <div><div class="table-num">T-1</div><div class="order-id">#1042</div></div>
+        <span class="priority-tag high">🔥 Rush</span>
+      </div>
+      <div class="order-items-list">
+        <div class="order-line"><span class="qty">1×</span><span class="item-name">Hyderabadi Biryani</span></div>
+        <div class="order-line"><span class="qty">1×</span><span class="item-name">Raita</span></div>
+        <div class="order-line"><span class="qty">2×</span><span class="item-name">Gulab Jamun</span></div>
+      </div>
+      <div class="order-bottom">
+        <div class="time-elapsed time-red"><span class="time-icon">⏱</span> 15m ago</div>
+        <div class="order-total">₹520</div>
+      </div>
+      <div class="order-actions">
+        <button class="action-btn ready">✓ Mark Ready</button>
+        <button class="action-btn cancel">✕</button>
+      </div>
+    </div>
+
+    <div class="order-card">
+      <div class="order-top">
+        <div><div class="table-num">T-9</div><div class="order-id">#1044</div></div>
+        <span class="priority-tag normal">Normal</span>
+      </div>
+      <div class="order-items-list">
+        <div class="order-line"><span class="qty">2×</span><span class="item-name">Grilled Sandwich</span></div>
+        <div class="order-line"><span class="qty">1×</span><span class="item-name">French Fries</span></div>
+        <div class="order-line"><span class="qty">2×</span><span class="item-name">Iced Tea</span></div>
+      </div>
+      <div class="order-bottom">
+        <div class="time-elapsed time-yellow"><span class="time-icon">⏱</span> 8m ago</div>
+        <div class="order-total">₹480</div>
+      </div>
+      <div class="order-actions">
+        <button class="action-btn ready">✓ Mark Ready</button>
+        <button class="action-btn cancel">✕</button>
+      </div>
+    </div>
+
+    <div class="order-card">
+      <div class="order-top">
+        <div><div class="table-num">T-4</div><div class="order-id">#1045</div></div>
+        <span class="priority-tag normal">Normal</span>
+      </div>
+      <div class="order-items-list">
+        <div class="order-line"><span class="qty">1×</span><span class="item-name">Chocolate Brownie</span><span class="item-note">warm, with ice cream</span></div>
+        <div class="order-line"><span class="qty">1×</span><span class="item-name">Café Latte</span></div>
+      </div>
+      <div class="order-bottom">
+        <div class="time-elapsed time-green"><span class="time-icon">⏱</span> 4m ago</div>
+        <div class="order-total">₹385</div>
+      </div>
+      <div class="order-actions">
+        <button class="action-btn ready">✓ Mark Ready</button>
+        <button class="action-btn cancel">✕</button>
+      </div>
+    </div>
+
+    <div class="order-card">
+      <div class="order-top">
+        <div><div class="table-num">T-11</div><div class="order-id">#1046</div></div>
+        <span class="priority-tag normal">Normal</span>
+      </div>
+      <div class="order-items-list">
+        <div class="order-line"><span class="qty">4×</span><span class="item-name">Samosa</span></div>
+        <div class="order-line"><span class="qty">2×</span><span class="item-name">Masala Chai</span></div>
+        <div class="order-line"><span class="qty">1×</span><span class="item-name">Vada Pav</span></div>
+      </div>
+      <div class="order-bottom">
+        <div class="time-elapsed time-green"><span class="time-icon">⏱</span> 3m ago</div>
+        <div class="order-total">₹350</div>
+      </div>
+      <div class="order-actions">
+        <button class="action-btn ready">✓ Mark Ready</button>
+        <button class="action-btn cancel">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- READY Column -->
+  <div class="column col-ready">
+    <div class="col-header">🟢 READY FOR PICKUP <span class="count">3</span></div>
+
+    <div class="order-card">
+      <div class="order-top">
+        <div><div class="table-num">T-2</div><div class="order-id">#1038</div></div>
+        <span class="priority-tag normal">Dine-in</span>
+      </div>
+      <div class="order-items-list">
+        <div class="order-line"><span class="qty">2×</span><span class="item-name">Pav Bhaji</span></div>
+        <div class="order-line"><span class="qty">1×</span><span class="item-name">Thums Up</span></div>
+        <div class="order-line"><span class="qty">2×</span><span class="item-name">Lassi</span></div>
+      </div>
+      <div class="order-bottom">
+        <div class="time-elapsed time-red"><span class="time-icon">⏱</span> Waiting 11m</div>
+        <div class="order-total">₹445</div>
+      </div>
+      <div class="order-actions">
+        <button class="action-btn done">✓ Served</button>
+      </div>
+    </div>
+
+    <div class="order-card">
+      <div class="order-top">
+        <div><div class="table-num">TA-5</div><div class="order-id">#1040</div></div>
+        <span class="priority-tag normal">📦 Takeaway</span>
+      </div>
+      <div class="order-items-list">
+        <div class="order-line"><span class="qty">1×</span><span class="item-name">Penne Arrabiata</span></div>
+        <div class="order-line"><span class="qty">1×</span><span class="item-name">Garlic Bread</span></div>
+        <div class="order-line"><span class="qty">1×</span><span class="item-name">Tiramisu</span></div>
+      </div>
+      <div class="order-bottom">
+        <div class="time-elapsed time-yellow"><span class="time-icon">⏱</span> Waiting 6m</div>
+        <div class="order-total">₹595</div>
+      </div>
+      <div class="order-actions">
+        <button class="action-btn done">✓ Picked Up</button>
+      </div>
+    </div>
+
+    <div class="order-card">
+      <div class="order-top">
+        <div><div class="table-num">T-6</div><div class="order-id">#1041</div></div>
+        <span class="priority-tag normal">Dine-in</span>
+      </div>
+      <div class="order-items-list">
+        <div class="order-line"><span class="qty">1×</span><span class="item-name">Chole Bhature</span></div>
+        <div class="order-line"><span class="qty">1×</span><span class="item-name">Sweet Lassi</span></div>
+      </div>
+      <div class="order-bottom">
+        <div class="time-elapsed time-green"><span class="time-icon">⏱</span> Waiting 2m</div>
+        <div class="order-total">₹285</div>
+      </div>
+      <div class="order-actions">
+        <button class="action-btn done">✓ Served</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function updateClock(){
+  const now=new Date();
+  const h=String(now.getHours()).padStart(2,'0');
+  const m=String(now.getMinutes()).padStart(2,'0');
+  const s=String(now.getSeconds()).padStart(2,'0');
+  document.getElementById('clock').textContent=h+':'+m+':'+s;
+}
+setInterval(updateClock,1000);
+updateClock();
+</script>
+</body>
+</html>

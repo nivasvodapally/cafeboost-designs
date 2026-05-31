@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CafeBoost — Cart & Checkout</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0C1F1E;--bg-card:#134E4A;--bg-elevated:#1A6B65;
+  --teal:#0F766E;--teal-mid:#14B8A6;--cyan:#5EEAD4;--mint:#CCFBF1;
+  --text:#F0FDFA;--text-muted:#99F6E4;--text-dim:#5EEAD4AA;
+  --white:#FFFFFF;--green:#22C55E;--rose:#FB7185;
+}
+html{font-family:'Inter',system-ui,sans-serif;font-size:14px;background:var(--bg);color:var(--text)}
+body{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+
+.container{max-width:460px;width:100%}
+
+/* Header */
+.header{
+  display:flex;align-items:center;justify-content:space-between;padding:12px 0 20px;
+  animation:fadeDown .4s ease-out;
+}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.back-btn{
+  width:40px;height:40px;border-radius:12px;background:var(--bg-card);
+  border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:18px;transition:all .2s;
+}
+.back-btn:hover{border-color:var(--teal-mid)}
+.header h1{font-size:20px;font-weight:800;letter-spacing:-.3px}
+.cart-badge{
+  background:var(--teal-mid);color:var(--bg);font-size:11px;font-weight:800;
+  padding:2px 8px;border-radius:10px;
+}
+
+/* Order Type Toggle */
+.toggle-wrap{
+  margin-bottom:20px;animation:cardUp .5s ease-out .05s both;
+}
+@keyframes cardUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.toggle-bar{
+  display:flex;background:var(--bg-card);border-radius:14px;padding:4px;
+  border:1px solid rgba(255,255,255,.06);
+}
+.toggle-opt{
+  flex:1;padding:10px 8px;border-radius:10px;text-align:center;cursor:pointer;
+  font-size:12px;font-weight:600;color:var(--text-dim);transition:all .25s;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  background:transparent;
+}
+.toggle-opt.active{
+  background:linear-gradient(135deg,var(--teal),var(--teal-mid));
+  color:var(--white);box-shadow:0 4px 16px rgba(20,184,166,.25);
+}
+.toggle-opt:not(.active):hover{color:var(--text);background:rgba(255,255,255,.04)}
+
+/* Cart Items */
+.cart-items{margin-bottom:20px}
+.cart-item{
+  background:var(--bg-card);border:1px solid rgba(255,255,255,.06);border-radius:16px;
+  padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:10px;
+  animation:cardUp .5s ease-out both;transition:transform .2s,box-shadow .2s;
+}
+.cart-item:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.cart-item:nth-child(1){animation-delay:.1s}
+.cart-item:nth-child(2){animation-delay:.15s}
+.cart-item:nth-child(3){animation-delay:.2s}
+.item-img{
+  width:60px;height:60px;border-radius:14px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:28px;
+}
+.item-img.type-1{background:linear-gradient(135deg,rgba(20,184,166,.2),rgba(94,234,212,.1))}
+.item-img.type-2{background:linear-gradient(135deg,rgba(249,115,22,.15),rgba(253,186,116,.1))}
+.item-img.type-3{background:linear-gradient(135deg,rgba(168,85,247,.15),rgba(196,181,253,.1))}
+.item-info{flex:1;min-width:0}
+.item-name{font-size:14px;font-weight:700}
+.item-desc{font-size:11px;color:var(--text-dim);margin-top:2px}
+.item-price{font-size:15px;font-weight:800;color:var(--cyan);margin-top:4px}
+.item-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.remove-btn{
+  width:28px;height:28px;border-radius:8px;background:rgba(251,113,133,.1);
+  border:none;color:var(--rose);cursor:pointer;font-size:14px;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.remove-btn:hover{background:rgba(251,113,133,.25);transform:scale(1.1)}
+.qty-control{display:flex;align-items:center;gap:0;gap:2px}
+.qty-btn{
+  width:30px;height:30px;border-radius:8px;border:1px solid rgba(255,255,255,.1);
+  background:var(--bg-elevated);color:var(--text);cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;font-family:inherit;
+}
+.qty-btn:hover{border-color:var(--teal-mid);background:rgba(20,184,166,.15)}
+.qty-btn.minus:hover{border-color:var(--rose);background:rgba(251,113,133,.15)}
+.qty-val{width:28px;text-align:center;font-size:14px;font-weight:700}
+
+/* Promo Code */
+.promo-section{
+  margin-bottom:20px;animation:cardUp .5s ease-out .25s both;
+}
+.promo-input-wrap{
+  display:flex;gap:8px;
+}
+.promo-input{
+  flex:1;background:var(--bg-card);border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;padding:12px 14px;color:var(--text);font-size:13px;
+  font-family:inherit;outline:none;transition:border-color .2s;
+}
+.promo-input:focus{border-color:var(--teal-mid)}
+.promo-input::placeholder{color:var(--text-dim)}
+.promo-apply{
+  background:linear-gradient(135deg,var(--teal),var(--teal-mid));
+  border:none;border-radius:12px;padding:12px 20px;color:var(--white);
+  font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;
+  transition:transform .2s,box-shadow .2s;
+}
+.promo-apply:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(20,184,166,.3)}
+.promo-tag{
+  display:inline-flex;align-items:center;gap:6px;margin-top:8px;
+  background:rgba(34,197,94,.12);color:var(--green);padding:6px 12px;
+  border-radius:8px;font-size:11px;font-weight:700;
+}
+.promo-tag .remove{cursor:pointer;font-size:14px;opacity:.7}
+.promo-tag .remove:hover{opacity:1}
+
+/* Bill Summary */
+.bill-card{
+  background:var(--bg-card);border:1px solid rgba(255,255,255,.06);border-radius:16px;
+  padding:20px;margin-bottom:20px;
+  animation:cardUp .5s ease-out .3s both;
+}
+.bill-card h3{font-size:14px;font-weight:700;margin-bottom:16px}
+.bill-row{display:flex;justify-content:space-between;padding:8px 0;font-size:13px}
+.bill-row.subtotal{color:var(--text-muted)}
+.bill-row.discount{color:var(--green)}
+.bill-row .label{color:var(--text-dim)}
+.bill-row .value{font-weight:600}
+.bill-divider{height:1px;background:rgba(255,255,255,.06);margin:12px 0}
+.bill-row.gst{font-size:12px;color:var(--text-dim)}
+.bill-row.total{font-size:18px;font-weight:800;padding-top:12px}
+.bill-row.total .value{color:var(--cyan)}
+.round-off{font-size:11px;color:var(--text-dim);text-align:right;margin-top:4px}
+
+/* Payment Methods */
+.payment-section{
+  margin-bottom:20px;animation:cardUp .5s ease-out .35s both;
+}
+.payment-section h3{font-size:14px;font-weight:700;margin-bottom:12px}
+.payment-options{display:flex;flex-direction:column;gap:8px}
+.pay-opt{
+  display:flex;align-items:center;gap:14px;padding:14px 16px;
+  background:var(--bg-card);border:1.5px solid rgba(255,255,255,.06);
+  border-radius:14px;cursor:pointer;transition:all .2s;
+}
+.pay-opt:hover{border-color:rgba(20,184,166,.3)}
+.pay-opt.selected{border-color:var(--teal-mid);background:rgba(20,184,166,.08)}
+.pay-radio{
+  width:20px;height:20px;border-radius:50%;border:2px solid rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;
+}
+.pay-opt.selected .pay-radio{border-color:var(--teal-mid)}
+.pay-opt.selected .pay-radio::after{
+  content:'';width:10px;height:10px;border-radius:50%;background:var(--teal-mid);
+}
+.pay-icon{font-size:20px;width:28px;text-align:center}
+.pay-info{flex:1}
+.pay-name{font-size:13px;font-weight:700}
+.pay-desc{font-size:11px;color:var(--text-dim);margin-top:1px}
+.pay-opt .upi-tag{
+  background:rgba(20,184,166,.15);color:var(--cyan);font-size:10px;
+  padding:2px 8px;border-radius:6px;font-weight:700;
+}
+
+/* Place Order */
+.place-order-wrap{animation:cardUp .5s ease-out .4s both}
+.place-order-btn{
+  width:100%;padding:16px;border:none;border-radius:16px;
+  background:linear-gradient(135deg,var(--teal),var(--teal-mid),#2DD4BF);
+  color:var(--white);font-size:16px;font-weight:800;cursor:pointer;
+  font-family:inherit;letter-spacing:-.2px;
+  transition:transform .2s,box-shadow .2s;
+  position:relative;overflow:hidden;
+}
+.place-order-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 32px rgba(20,184,166,.4);
+}
+.place-order-btn:active{transform:translateY(0)}
+.place-order-btn::after{
+  content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);
+  animation:btnShimmer 3s ease-in-out infinite;
+}
+@keyframes btnShimmer{0%{left:-100%}50%{left:100%}100%{left:100%}}
+.secure-note{
+  text-align:center;margin-top:10px;font-size:11px;color:var(--text-dim);
+  display:flex;align-items:center;justify-content:center;gap:4px;
+}
+
+@media(max-width:480px){
+  body{padding:12px}
+  .item-img{width:50px;height:50px;font-size:24px}
+  .toggle-opt{font-size:11px;padding:8px 4px}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <div class="back-btn">←</div>
+    <h1>Your Cart</h1>
+    <span class="cart-badge">3 items</span>
+  </div>
+
+  <!-- Order Type Toggle -->
+  <div class="toggle-wrap">
+    <div class="toggle-bar">
+      <div class="toggle-opt active" onclick="selectType(this)">🍽️ Dine-In</div>
+      <div class="toggle-opt" onclick="selectType(this)">🛵 Delivery</div>
+      <div class="toggle-opt" onclick="selectType(this)">📦 Takeaway</div>
+    </div>
+  </div>
+
+  <!-- Cart Items -->
+  <div class="cart-items">
+    <div class="cart-item">
+      <div class="item-img type-1">🍛</div>
+      <div class="item-info">
+        <div class="item-name">Paneer Butter Masala</div>
+        <div class="item-desc">Rich creamy paneer curry with butter naan</div>
+        <div class="item-price">₹280</div>
+      </div>
+      <div class="item-right">
+        <button class="remove-btn" onclick="this.closest('.cart-item').style.display='none'">✕</button>
+        <div class="qty-control">
+          <button class="qty-btn minus" onclick="updateQty(this,-1)">−</button>
+          <span class="qty-val">1</span>
+          <button class="qty-btn" onclick="updateQty(this,1)">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="cart-item">
+      <div class="item-img type-2">☕</div>
+      <div class="item-info">
+        <div class="item-name">Masala Chai</div>
+        <div class="item-desc">Aromatic spiced tea, cardamom & ginger</div>
+        <div class="item-price">₹60</div>
+      </div>
+      <div class="item-right">
+        <button class="remove-btn" onclick="this.closest('.cart-item').style.display='none'">✕</button>
+        <div class="qty-control">
+          <button class="qty-btn minus" onclick="updateQty(this,-1)">−</button>
+          <span class="qty-val">2</span>
+          <button class="qty-btn" onclick="updateQty(this,1)">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="cart-item">
+      <div class="item-img type-3">🍰</div>
+      <div class="item-info">
+        <div class="item-name">Chocolate Brownie</div>
+        <div class="item-desc">Warm walnut brownie with vanilla ice cream</div>
+        <div class="item-price">₹180</div>
+      </div>
+      <div class="item-right">
+        <button class="remove-btn" onclick="this.closest('.cart-item').style.display='none'">✕</button>
+        <div class="qty-control">
+          <button class="qty-btn minus" onclick="updateQty(this,-1)">−</button>
+          <span class="qty-val">1</span>
+          <button class="qty-btn" onclick="updateQty(this,1)">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Promo Code -->
+  <div class="promo-section">
+    <div class="promo-input-wrap">
+      <input class="promo-input" type="text" placeholder="Enter promo code" id="promoInput">
+      <button class="promo-apply" onclick="applyPromo()">Apply</button>
+    </div>
+    <div class="promo-tag" id="promoTag" style="display:none">
+      <span>🏷️ CAFE20 — 20% off applied!</span>
+      <span class="remove" onclick="removePromo()">✕</span>
+    </div>
+  </div>
+
+  <!-- Bill Summary -->
+  <div class="bill-card">
+    <h3>Bill Summary</h3>
+    <div class="bill-row subtotal">
+      <span class="label">Subtotal (4 items)</span>
+      <span class="value">₹600.00</span>
+    </div>
+    <div class="bill-row discount" id="discountRow" style="display:none">
+      <span class="label">Promo Discount (20%)</span>
+      <span class="value">−₹120.00</span>
+    </div>
+    <div class="bill-row gst">
+      <span class="label">CGST (2.5%)</span>
+      <span class="value">₹12.00</span>
+    </div>
+    <div class="bill-row gst">
+      <span class="label">SGST (2.5%)</span>
+      <span class="value">₹12.00</span>
+    </div>
+    <div class="bill-row gst">
+      <span class="label">Service Charge</span>
+      <span class="value">₹0.00</span>
+    </div>
+    <div class="bill-divider"></div>
+    <div class="bill-row total">
+      <span class="label">Grand Total</span>
+      <span class="value" id="grandTotal">₹624</span>
+    </div>
+    <div class="round-off" id="roundOff">Round off: ₹0.00</div>
+  </div>
+
+  <!-- Payment Methods -->
+  <div class="payment-section">
+    <h3>Payment Method</h3>
+    <div class="payment-options">
+      <div class="pay-opt selected" onclick="selectPay(this)">
+        <div class="pay-radio"></div>
+        <div class="pay-icon">📱</div>
+        <div class="pay-info">
+          <div class="pay-name">UPI Payment</div>
+          <div class="pay-desc">Google Pay, PhonePe, Paytm</div>
+        </div>
+        <span class="upi-tag">Instant</span>
+      </div>
+      <div class="pay-opt" onclick="selectPay(this)">
+        <div class="pay-radio"></div>
+        <div class="pay-icon">💳</div>
+        <div class="pay-info">
+          <div class="pay-name">Credit / Debit Card</div>
+          <div class="pay-desc">Visa, Mastercard, RuPay</div>
+        </div>
+      </div>
+      <div class="pay-opt" onclick="selectPay(this)">
+        <div class="pay-radio"></div>
+        <div class="pay-icon">💵</div>
+        <div class="pay-info">
+          <div class="pay-name">Cash</div>
+          <div class="pay-desc">Pay at the counter</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Place Order -->
+  <div class="place-order-wrap">
+    <button class="place-order-btn" onclick="this.textContent='✅ Order Placed!';this.style.background='linear-gradient(135deg,#059669,#10B981)'">
+      Place Order — ₹624
+    </button>
+    <div class="secure-note">🔒 Secure & encrypted payment</div>
+  </div>
+</div>
+
+<script>
+function selectType(el){
+  document.querySelectorAll('.toggle-opt').forEach(o=>o.classList.remove('active'));
+  el.classList.add('active');
+}
+function selectPay(el){
+  document.querySelectorAll('.pay-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function updateQty(btn,delta){
+  const val=btn.closest('.qty-control').querySelector('.qty-val');
+  let n=parseInt(val.textContent)+delta;
+  if(n<1)n=1;
+  if(n>20)n=20;
+  val.textContent=n;
+}
+function applyPromo(){
+  const input=document.getElementById('promoInput');
+  if(input.value.trim()){
+    document.getElementById('promoTag').style.display='inline-flex';
+    document.getElementById('discountRow').style.display='flex';
+    document.getElementById('grandTotal').textContent='₹504';
+    document.querySelector('.place-order-btn').textContent='Place Order — ₹504';
+    input.value='';
+  }
+}
+function removePromo(){
+  document.getElementById('promoTag').style.display='none';
+  document.getElementById('discountRow').style.display='none';
+  document.getElementById('grandTotal').textContent='₹624';
+  document.querySelector('.place-order-btn').textContent='Place Order — ₹624';
+}
+</script>
+</body>
+</html>
